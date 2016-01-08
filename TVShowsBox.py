@@ -79,7 +79,7 @@ def listEntry(args):
 def listAllEntry():
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    sql = "SELECT * from watchingSeries"
+    sql = "SELECT * from watchingSeries ORDER BY Name"
     for row in c.execute(sql):
         name = row[0]
         season=str(row[1])
