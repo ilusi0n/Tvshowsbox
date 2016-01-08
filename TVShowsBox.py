@@ -13,7 +13,6 @@ def searchEntry(name):
     if len(data)==0:
         result=False
     conn.close()
-    #print(result)
     return result
 
 
@@ -21,8 +20,9 @@ def createEntry(args):
     name=" ".join(args)
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    sql="INSERT INTO watchingSeries VALUES ("+ "'" + name + "'," + "'0','0')"
-    c.execute(sql)
+    t = (name,)
+    sql="INSERT INTO watchingSeries VALUES (?,'0','0')"
+    c.execute(sql,t)
     conn.commit()
     conn.close()
 
@@ -95,36 +95,37 @@ def showHelp():
     print("hue")
 
 
-if __name__ == "__main__":
+def main(argv):
     args = argv[1:]
 
-    while len(args) > 0:
-        arg = args[0]
-        args = args[1:]
+    if len(args)==0:
+        print("Error: It is required at least 1 argument. Use the --h or help to see which options are available")
+        return
 
-        if arg == "add" or arg=="-a":
-            createEntry(args)
-            break
+    arg = args[0]
+    args = args[1:]
 
-        if arg == "search" or arg=="-s":
-            searchEntry(args[0])
-            break
+    if arg == "add" or arg=="-a":
+        createEntry(args)
+        return
 
-        if arg == "edit" or arg=="-e":
-            modifyEntry(args)
-            break
+    if arg == "edit" or arg=="-e":
+        modifyEntry(args)
+        return
 
-        if arg == "delete" or arg=="-d":
-            deleteEntry(args)
-            break
+    if arg == "delete" or arg=="-d":
+        deleteEntry(args)
+        return
 
-        if arg == "list" or arg=="-l":
-            listEntry(args)
-            break
+    if arg == "list" or arg=="-l":
+        listEntry(args)
+        return
 
-        if arg == "listall" or arg=="-la":
-            listAllEntry()
-            break
+    if arg == "listAll" or arg=="-la":
+        listAllEntry()
+        return
 
-        showHelp()
-        break
+    print("Invalid Option!")
+
+if __name__ == "__main__":
+    main(argv)
