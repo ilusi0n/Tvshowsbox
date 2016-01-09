@@ -207,7 +207,7 @@ def showHelp():
     print("\tedit, -e \tNAME SEASON EPISODE \tName of the show, Season number, Episode number \tEdit a TV Show")
     print("\tdelete, -d \tNAME \tName of the show \tDelete a TV Show")
     print("\tlist, -l \tNAME \tName of the show \tList a TV Show (it shows partial results)")
-    print("\tlistAll, -l \tNAME \tName of the show \tList all the TV Shows")
+    print("\tlistAll, -la \tNAME \tName of the show \tList all the TV Shows")
     print("\twatch, -w \tNAME \tName of the show \tMark watch the next episode")
     print("\thelp, -h \tShow this information")
 
@@ -216,7 +216,7 @@ def main(argv):
     args = argv[1:]
 
     if len(args)==0:
-        print(bcolors.FAIL + "Error: It is required at least 1 argument. Use the --h or help to see which options are available" + bcolors.ENDC)
+        print(bcolors.FAIL + "Error: It's required at least 1 argument. Use the -h or help to see which options are available" + bcolors.ENDC)
         return
 
     arg = args[0]
