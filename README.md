@@ -7,6 +7,7 @@
 
 ### Dependencies ###
 
+* python
 * sqlite3
 
 ### Who do I talk to? ###
