@@ -1,8 +1,13 @@
 #!/usr/bin/env python
+import sys
+import os.path
 from sys import argv
 import sqlite3
 
-database="tvshows.db"
+from os.path import expanduser
+home = expanduser("~")
+configFile=home+"/.config/TVShowsBox/TVShowBox.conf"
+#database=""
 
 class bcolors:
     HEADER = '\033[95m'
@@ -14,7 +19,39 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+def checkDatabase():
+    database=getDataBaseName()
+    if (database==""):
+        sys.exit(bcolors.FAIL + "Error: Edit the configuration file and give the database a name" + bcolors.ENDC)
+
+    return os.path.exists(database)
+
+def getDataBaseName():
+    with open(configFile,'r') as inp:
+        data = inp.readlines()
+
+    for line in data:
+        #print(line)
+        if "#Database" in line:
+            return ""
+        if "Database=" in line:
+            databaseName=line.replace("Database=","").replace('"',"").strip()
+            return home+"/.config/TVShowsBox/"+databaseName+".db"
+
+#assumes it doesn't fail. Need testing
+def createDatabase():
+    database=getDataBaseName()
+    if (database==""):
+        sys.exit(bcolors.FAIL + "Error: Edit the configuration file and give the database a name" + bcolors.ENDC)
+
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    c.execute("CREATE TABLE watchingSeries (Name text, Season integer, Episode integer)")
+    conn.commit()
+    conn.close()
+
 def searchEntry(name):
+    database = getDataBaseName()
     result=True
     conn = sqlite3.connect(database)
     c = conn.cursor()
@@ -27,6 +64,7 @@ def searchEntry(name):
 
 #this entry must exist!
 def getEntry(name):
+    database = getDataBaseName()
     result=True
     conn = sqlite3.connect(database)
     c = conn.cursor()
@@ -39,6 +77,7 @@ def getEntry(name):
 
 
 def createEntry(args):
+    database = getDataBaseName()
     name=" ".join(args)
     conn = sqlite3.connect(database)
     c = conn.cursor()
@@ -49,6 +88,7 @@ def createEntry(args):
     conn.close()
 
 def modifyEntry(args):
+    database = getDataBaseName()
     name=" ".join(args)
     if searchEntry(name)==False:
         print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
@@ -66,6 +106,7 @@ def modifyEntry(args):
     conn.close()
 
 def watchEntry(args):
+    database = getDataBaseName()
     name=" ".join(args)
     if searchEntry(name)==False:
         print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
@@ -97,13 +138,15 @@ def watchEntry(args):
     season = str(nEntry[1])
     episode = str(nEntry[2])
     print("")
-    print("Update")
-    print(bcolors.HEADER + "Name: "+name + bcolors.ENDC)
-    print(bcolors.BLUE + "Season: "+season + bcolors.ENDC)
-    print(bcolors.GREEN + "Episode: "+episode + bcolors.ENDC)
+    print(bcolors.WARNING + "Update" + bcolors.ENDC)
+    print("")
+    print(bcolors.HEADER + "\tName: "+name + bcolors.ENDC)
+    print(bcolors.BLUE + "\tSeason: "+season + bcolors.ENDC)
+    print(bcolors.GREEN + "\tEpisode: "+episode + bcolors.ENDC)
     print("")
 
 def deleteEntry(args):
+    database = getDataBaseName()
     name=" ".join(args)
     if searchEntry(name)==False:
         print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
@@ -118,6 +161,7 @@ def deleteEntry(args):
     conn.close()
 
 def listEntry(args):
+    database = getDataBaseName()
     name="%"+" ".join(args)+"%"
     if searchEntry(name)==False:
         print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
@@ -139,6 +183,7 @@ def listEntry(args):
     conn.close()
 
 def listAllEntries():
+    database = getDataBaseName()
     conn = sqlite3.connect(database)
     c = conn.cursor()
     sql = "SELECT * from watchingSeries ORDER BY Name"
@@ -177,6 +222,9 @@ def main(argv):
     arg = args[0]
     args = args[1:]
 
+    if checkDatabase()==False:
+        createDatabase()
+
     if arg == "add" or arg=="-a":
         createEntry(args)
         return
@@ -203,6 +251,11 @@ def main(argv):
 
     if arg == "help" or arg=="-h":
         showHelp()
+        return
+
+    if arg == "debug":
+        if checkDatabase()==False:
+            createDatabase()
         return
 
     print("Invalid Option!")
