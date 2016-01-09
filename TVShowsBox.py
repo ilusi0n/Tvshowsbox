@@ -7,7 +7,7 @@ import sqlite3
 from os.path import expanduser
 home = expanduser("~")
 configFile=home+"/.config/TVShowsBox/TVShowBox.conf"
-#database=""
+configFolder=home+"/.config/TVShowsBox"
 
 class bcolors:
     HEADER = '\033[95m'
@@ -221,6 +221,9 @@ def main(argv):
 
     arg = args[0]
     args = args[1:]
+
+    if not os.path.exists(configFolder):
+        sys.exit(bcolors.FAIL + "Error: create the folder TVShowsBox and create the config file based on the example" + bcolors.ENDC)
 
     if checkDatabase()==False:
         createDatabase()
