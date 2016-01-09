@@ -15,6 +15,18 @@ def searchEntry(name):
     conn.close()
     return result
 
+#this entry must exist!
+def getEntry(name):
+    result=True
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    t=(name,)
+    sql = "SELECT * FROM watchingSeries WHERE Name = ?"
+    for row in c.execute(sql,t):
+        result = row
+    conn.close()
+    return result
+
 
 def createEntry(args):
     name=" ".join(args)
@@ -42,6 +54,44 @@ def modifyEntry(args):
     c.execute(sql,t)
     conn.commit()
     conn.close()
+
+def watchEntry(args):
+    name=" ".join(args)
+    if searchEntry(name)==False:
+        print("That entry doesn't exist")
+        return
+
+    entry=getEntry(name)
+    name = entry[0]
+    season = entry[1]
+    episode = entry[2]
+
+    print("Name: "+name)
+    print("Season: "+str(season))
+    print("Episode: "+str(episode))
+    print("")
+
+    response = input("New Season? (y/n): ")
+    if response == "y":
+        t = (season+1,1,name,)
+    else:
+        t = (season,episode+1,name,)
+
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    sql = "UPDATE watchingSeries SET Season = ?, Episode = ?  WHERE Name = ?"
+    c.execute(sql,t)
+    conn.commit()
+    conn.close()
+    nEntry=getEntry(name)
+    season = str(nEntry[1])
+    episode = str(nEntry[2])
+    print("")
+    print("Update")
+    print("Name: "+name)
+    print("Season: "+season)
+    print("Episode: "+episode)
+    print("")
 
 def deleteEntry(args):
     name=" ".join(args)
@@ -124,6 +174,10 @@ def main(argv):
 
     if arg == "listAll" or arg=="-la":
         listAllEntry()
+        return
+
+    if arg == "watch" or arg=="-w":
+        watchEntry(args)
         return
 
     print("Invalid Option!")
