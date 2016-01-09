@@ -26,7 +26,7 @@ def searchEntry(name):
     return result
 
 #this entry must exist!
-def getEntry(name):
+def try(name):
     result=True
     conn = sqlite3.connect(database)
     c = conn.cursor()
@@ -71,7 +71,7 @@ def watchEntry(args):
         print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
         return
 
-    entry=getEntry(name)
+    entry=try(name)
     name = entry[0]
     season = entry[1]
     episode = entry[2]
@@ -93,7 +93,7 @@ def watchEntry(args):
     c.execute(sql,t)
     conn.commit()
     conn.close()
-    nEntry=getEntry(name)
+    nEntry=try(name)
     season = str(nEntry[1])
     episode = str(nEntry[2])
     print("")
@@ -137,7 +137,7 @@ def listEntry(args):
         print("")
     conn.close()
 
-def listAllEntry():
+def listAllEntries():
     conn = sqlite3.connect(database)
     c = conn.cursor()
     sql = "SELECT * from watchingSeries ORDER BY Name"
@@ -170,7 +170,7 @@ def main(argv):
     args = argv[1:]
 
     if len(args)==0:
-        print("Error: It is required at least 1 argument. Use the --h or help to see which options are available")
+        print(bcolors.FAIL + "Error: It is required at least 1 argument. Use the --h or help to see which options are available" + bcolors.ENDC)
         return
 
     arg = args[0]
@@ -193,7 +193,7 @@ def main(argv):
         return
 
     if arg == "listAll" or arg=="-la":
-        listAllEntry()
+        listAllEntries()
         return
 
     if arg == "watch" or arg=="-w":
