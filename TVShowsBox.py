@@ -127,6 +127,7 @@ def listEntry(args):
     c = conn.cursor()
     t = (name,)
     sql = "SELECT * from watchingSeries WHERE Name LIKE ?"
+    print("")
     for row in c.execute(sql,t):
         name=row[0]
         season=str(row[1])
