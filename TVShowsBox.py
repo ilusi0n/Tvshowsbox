@@ -8,7 +8,7 @@ def searchEntry(name):
     result=True
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    c.execute("SELECT rowid FROM watchingSeries WHERE Name = ?", (name,))
+    c.execute("SELECT rowid FROM watchingSeries WHERE Name LIKE ?", (name,))
     data=c.fetchall()
     if len(data)==0:
         result=False
@@ -58,7 +58,7 @@ def deleteEntry(args):
     conn.close()
 
 def listEntry(args):
-    name=" ".join(args)
+    name="%"+" ".join(args)+"%"
     if searchEntry(name)==False:
         print("That entry doesn't exist")
         return
@@ -66,14 +66,15 @@ def listEntry(args):
     conn = sqlite3.connect(database)
     c = conn.cursor()
     t = (name,)
-    sql = "SELECT * from watchingSeries WHERE Name = ?"
-    c.execute(sql,t)
-    aList=c.fetchone()
-    season=str(aList[1])
-    episode=str(aList[2])
-    print("Name: "+name)
-    print("Season: "+season)
-    print("Episode: "+episode)
+    sql = "SELECT * from watchingSeries WHERE Name LIKE ?"
+    for row in c.execute(sql,t):
+        name=row[0]
+        season=str(row[1])
+        episode=str(row[2])
+        print("Name: "+name)
+        print("Season: "+season)
+        print("Episode: "+episode)
+        print("")
     conn.close()
 
 def listAllEntry():
