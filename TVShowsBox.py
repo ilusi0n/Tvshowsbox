@@ -143,7 +143,17 @@ def listAllEntry():
 
 
 def showHelp():
-    print("hue")
+    print("TVShowsBox v0.1")
+    print("A script written in python that manages all your TV Shows in a sqlite database.")
+    print("")
+    print("Options:")
+    print("\tadd, -a \tNAME \tName of the show \tAdd a TV show" )
+    print("\tedit, -e \tNAME SEASON EPISODE \tName of the show, Season number, Episode number \tEdit a TV Show")
+    print("\tdelete, -d \tNAME \tName of the show \tDelete a TV Show")
+    print("\tlist, -l \tNAME \tName of the show \tList a TV Show (it shows partial results)")
+    print("\tlistAll, -l \tNAME \tName of the show \tList all the TV Shows")
+    print("\twatch, -w \tNAME \tName of the show \tMark watch the next episode")
+    print("\thelp, -h \tShow this information")
 
 
 def main(argv):
@@ -178,6 +188,10 @@ def main(argv):
 
     if arg == "watch" or arg=="-w":
         watchEntry(args)
+        return
+
+    if arg == "help" or arg=="-h":
+        showHelp()
         return
 
     print("Invalid Option!")
