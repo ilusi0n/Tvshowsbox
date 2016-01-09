@@ -26,7 +26,7 @@ def searchEntry(name):
     return result
 
 #this entry must exist!
-def try(name):
+def getEntry(name):
     result=True
     conn = sqlite3.connect(database)
     c = conn.cursor()
@@ -71,7 +71,7 @@ def watchEntry(args):
         print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
         return
 
-    entry=try(name)
+    entry=getEntry(name)
     name = entry[0]
     season = entry[1]
     episode = entry[2]
@@ -93,7 +93,7 @@ def watchEntry(args):
     c.execute(sql,t)
     conn.commit()
     conn.close()
-    nEntry=try(name)
+    nEntry=getEntry(name)
     season = str(nEntry[1])
     episode = str(nEntry[2])
     print("")
