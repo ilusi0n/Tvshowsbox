@@ -4,6 +4,16 @@ import sqlite3
 
 database="tvshows.db"
 
+class bcolors:
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 def searchEntry(name):
     result=True
     conn = sqlite3.connect(database)
@@ -33,7 +43,7 @@ def createEntry(args):
     conn = sqlite3.connect(database)
     c = conn.cursor()
     t = (name,)
-    sql="INSERT INTO watchingSeries VALUES (?,'0','0')"
+    sql="INSERT INTO watchingSeries VALUES (?,'1','0')"
     c.execute(sql,t)
     conn.commit()
     conn.close()
@@ -41,11 +51,11 @@ def createEntry(args):
 def modifyEntry(args):
     name=" ".join(args)
     if searchEntry(name)==False:
-        print("That entry doesn't exist")
+        print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
         return
 
-    season = input("Season: ")
-    episode = input("Episode: ")
+    season = input(bcolors.BLUE + "Season: " + bcolors.ENDC)
+    episode = input(bcolors.GREEN + "Episode: " + bcolors.ENDC)
     t = (season,episode,name,)
 
     conn = sqlite3.connect(database)
@@ -58,7 +68,7 @@ def modifyEntry(args):
 def watchEntry(args):
     name=" ".join(args)
     if searchEntry(name)==False:
-        print("That entry doesn't exist")
+        print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
         return
 
     entry=getEntry(name)
@@ -66,9 +76,9 @@ def watchEntry(args):
     season = entry[1]
     episode = entry[2]
 
-    print("Name: "+name)
-    print("Season: "+str(season))
-    print("Episode: "+str(episode))
+    print(bcolors.HEADER + "Name: "+name + bcolors.ENDC)
+    print(bcolors.BLUE + "Season: "+str(season) + bcolors.ENDC)
+    print(bcolors.GREEN + "Episode: "+str(episode) + bcolors.ENDC)
     print("")
 
     response = input("New Season? (y/n): ")
@@ -88,15 +98,15 @@ def watchEntry(args):
     episode = str(nEntry[2])
     print("")
     print("Update")
-    print("Name: "+name)
-    print("Season: "+season)
-    print("Episode: "+episode)
+    print(bcolors.HEADER + "Name: "+name + bcolors.ENDC)
+    print(bcolors.BLUE + "Season: "+season + bcolors.ENDC)
+    print(bcolors.GREEN + "Episode: "+episode + bcolors.ENDC)
     print("")
 
 def deleteEntry(args):
     name=" ".join(args)
     if searchEntry(name)==False:
-        print("That entry doesn't exist")
+        print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
         return
 
     conn = sqlite3.connect(database)
@@ -110,7 +120,7 @@ def deleteEntry(args):
 def listEntry(args):
     name="%"+" ".join(args)+"%"
     if searchEntry(name)==False:
-        print("That entry doesn't exist")
+        print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
         return
 
     conn = sqlite3.connect(database)
@@ -121,9 +131,9 @@ def listEntry(args):
         name=row[0]
         season=str(row[1])
         episode=str(row[2])
-        print("Name: "+name)
-        print("Season: "+season)
-        print("Episode: "+episode)
+        print(bcolors.HEADER + "Name: "+name + bcolors.ENDC)
+        print(bcolors.BLUE +"Season: "+season + bcolors.ENDC)
+        print(bcolors.GREEN + "Episode: "+episode + bcolors.ENDC)
         print("")
     conn.close()
 
@@ -135,15 +145,15 @@ def listAllEntry():
         name = row[0]
         season=str(row[1])
         episode=str(row[2])
-        print("Name: "+name)
-        print("Season: "+season)
-        print("Episode: "+episode)
+        print(bcolors.HEADER + "Name: "+name + bcolors.ENDC)
+        print(bcolors.BLUE + "Season: "+season + bcolors.ENDC)
+        print(bcolors.GREEN + "Episode: "+episode + bcolors.ENDC)
         print("")
     conn.close()
 
 
 def showHelp():
-    print("TVShowsBox v0.1")
+    print(bcolors.HEADER+ "TVShowsBox v0.1"+ bcolors.ENDC)
     print("A script written in python that manages all your TV Shows in a sqlite database.")
     print("")
     print("Options:")
