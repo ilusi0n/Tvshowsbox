@@ -250,8 +250,7 @@ def main(argv):
     if len(args) == 0:
         message = printErrorMessage(
             "Error: It's required at least 1 argument. Use the -h or help to see which options are available")
-        print(message)
-        return
+        sys.exit(message)
 
     arg = args[0]
     args = args[1:]
@@ -320,7 +319,8 @@ def main(argv):
             createDatabase()
         return
 
-    print("Invalid Option!")
+    message = printErrorMessage("Error: Invalid Option! Use the -h or help to see which options are available")
+    sys.exit(message)
 
 
 if __name__ == "__main__":
