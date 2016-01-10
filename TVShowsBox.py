@@ -25,10 +25,7 @@ class bcolors:
 def checkDatabase():
     database = getDataBaseName()
     if (database == ""):
-        sys.exit(
-            bcolors.FAIL +
-            "Error: Edit the configuration file and give the database a name" +
-            bcolors.ENDC)
+        sys.exit(bcolors.FAIL + "Error: Edit the configuration file and give the database a name" + bcolors.ENDC)
 
     return os.path.exists(database)
 
@@ -42,23 +39,18 @@ def getDataBaseName():
         if "#Database" in line:
             return ""
         if "Database=" in line:
-            databaseName = line.replace("Database=", "").replace('"',
-                                                                 "").strip()
+            databaseName = line.replace("Database=", "").replace('"', "").strip()
             return home + "/.config/TVShowsBox/" + databaseName + ".db"
 
 
 def createDatabase():
     database = getDataBaseName()
     if (database == ""):
-        sys.exit(
-            bcolors.FAIL +
-            "Error: Edit the configuration file and give the database a name" +
-            bcolors.ENDC)
+        sys.exit(bcolors.FAIL + "Error: Edit the configuration file and give the database a name" + bcolors.ENDC)
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    c.execute(
-        "CREATE TABLE watchingSeries (Name text, Season integer, Episode integer)")
+    c.execute("CREATE TABLE watchingSeries (Name text, Season integer, Episode integer)")
     conn.commit()
     conn.close()
 
@@ -68,7 +60,7 @@ def searchEntry(name):
     result = True
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    c.execute("SELECT rowid FROM watchingSeries WHERE Name LIKE ?", (name, ))
+    c.execute("SELECT rowid FROM watchingSeries WHERE Name LIKE ?", (name,))
     data = c.fetchall()
     if len(data) == 0:
         result = False
@@ -82,7 +74,7 @@ def getEntry(name):
     result = True
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    t = (name, )
+    t = (name,)
     sql = "SELECT * FROM watchingSeries WHERE Name = ?"
     for row in c.execute(sql, t):
         result = row
@@ -95,7 +87,7 @@ def createEntry(args):
     name = " ".join(args)
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    t = (name, )
+    t = (name,)
     sql = "INSERT INTO watchingSeries VALUES (?,'1','0')"
     c.execute(sql, t)
     conn.commit()
@@ -111,7 +103,7 @@ def modifyEntry(args):
 
     season = input(bcolors.BLUE + "Season: " + bcolors.ENDC)
     episode = input(bcolors.GREEN + "Episode: " + bcolors.ENDC)
-    t = (season, episode, name, )
+    t = (season, episode, name,)
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
@@ -140,12 +132,11 @@ def watchEntry(args):
 
     response = input("New Season? (y/n): ")
     if response == "y":
-        t = (season + 1, 1, name, )
+        t = (season + 1, 1, name,)
     elif response == "n":
-        t = (season, episode + 1, name, )
+        t = (season, episode + 1, name,)
     else:
-        sys.exit(bcolors.FAIL + "ERROR: That answer is not valid. Aborting..."
-                 + bcolors.ENDC)
+        sys.exit(bcolors.FAIL + "ERROR: That answer is not valid. Aborting..." + bcolors.ENDC)
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
@@ -174,7 +165,7 @@ def deleteEntry(args):
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    t = (name, )
+    t = (name,)
     sql = "DELETE from watchingSeries WHERE Name = ?"
     c.execute(sql, t)
     conn.commit()
@@ -190,7 +181,7 @@ def listEntry(args):
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    t = (name, )
+    t = (name,)
     sql = "SELECT * from watchingSeries WHERE Name LIKE ? ORDER BY Name"
     print("")
     for row in c.execute(sql, t):
@@ -206,19 +197,15 @@ def listEntry(args):
 
 def showHelp():
     print(bcolors.HEADER + "TVShowsBox v0.1" + bcolors.ENDC)
-    print(
-        "A script written in python that manages all your TV Shows in a sqlite database.")
+    print("A script written in python that manages all your TV Shows in a sqlite database.")
     print("")
     print("Options:")
     print("\tadd, -a \tNAME \tName of the show \tAdd a TV show")
-    print(
-        "\tedit, -e \tNAME SEASON EPISODE \tName of the show, Season number, Episode number \tEdit a TV Show")
+    print("\tedit, -e \tNAME SEASON EPISODE \tName of the show, Season number, Episode number \tEdit a TV Show")
     print("\tdelete, -d \tNAME \tName of the show \tDelete a TV Show")
-    print(
-        "\tlist, -l \tNAME \tName of the show \tList a TV Show (it shows partial results)")
+    print("\tlist, -l \tNAME \tName of the show \tList a TV Show (it shows partial results)")
     print("\tlistAll, -la \tNAME \tName of the show \tList all the TV Shows")
-    print(
-        "\twatch, -w \tNAME \tName of the show \tMark watch the next episode")
+    print("\twatch, -w \tNAME \tName of the show \tMark watch the next episode")
     print("\thelp, -h \tShow this information")
 
 
@@ -226,71 +213,57 @@ def main(argv):
     args = argv[1:]
 
     if len(args) == 0:
-        print(
-            bcolors.FAIL +
-            "Error: It's required at least 1 argument. Use the -h or help to see which options are available"
-            + bcolors.ENDC)
+        print(bcolors.FAIL +
+              "Error: It's required at least 1 argument. Use the -h or help to see which options are available" +
+              bcolors.ENDC)
         return
 
     arg = args[0]
     args = args[1:]
 
     if not os.path.exists(configFolder):
-        sys.exit(
-            bcolors.FAIL +
-            "Error: create the folder TVShowsBox and create the config file based on the example"
-            + bcolors.ENDC)
+        sys.exit(bcolors.FAIL + "Error: create the folder TVShowsBox and create the config file based on the example" +
+                 bcolors.ENDC)
 
     if checkDatabase() == False:
         createDatabase()
 
     if arg == "add" or arg == "-a":
         if not (len(args) > 0):
-            sys.exit(bcolors.FAIL +
-                     "Error: This option needs the name of the TV Show" +
-                     bcolors.ENDC)
+            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
         listEntry(args)
         createEntry(args)
         return
 
     if arg == "edit" or arg == "-e":
         if not (len(args) > 0):
-            sys.exit(bcolors.FAIL +
-                     "Error: This option needs the name of the TV Show" +
-                     bcolors.ENDC)
+            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
         listEntry(args)
         modifyEntry(args)
         return
 
     if arg == "delete" or arg == "-d":
         if not (len(args) > 0):
-            sys.exit(bcolors.FAIL +
-                     "Error: This option needs the name of the TV Show" +
-                     bcolors.ENDC)
+            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
         listEntry(args)
         deleteEntry(args)
         return
 
     if arg == "list" or arg == "-l":
         if not (len(args) > 0):
-            sys.exit(bcolors.FAIL +
-                     "Error: This option needs the name of the TV Show" +
-                     bcolors.ENDC)
+            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
         listEntry(args)
         return
 
     if arg == "listAll" or arg == "-la":
         if not (len(args) == 0):
-            sys.exit(bcolors.FAIL + "Error: This option doesn't take arguments"
-                     + bcolors.ENDC)
+            sys.exit(bcolors.FAIL + "Error: This option doesn't take arguments" + bcolors.ENDC)
         listEntry(args)
         return
 
     if arg == "watch" or arg == "-w":
         if not (len(args) > 0):
-            sys.exit(bcolors.FAIL +
-                     "Error: This option needs the name of the TV Show" +
-                     bcolors.ENDC)
+            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
         listEntry(args)
         watchEntry(args)
         return
