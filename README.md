@@ -21,7 +21,7 @@
 ### Features to be developed ###
 
 * Import and export the database to a plain file
-* Mark a specific episode as watched only if is less than the current watched episode
+* Mark a specific episode as watched only if is greater than the current watched episode
 
 ### Who do I talk to? ###
 
