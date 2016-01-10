@@ -6,7 +6,7 @@ import sqlite3
 
 from os.path import expanduser
 home = expanduser("~")
-configFile=home+"/.config/TVShowsBox/TVShowBox.conf"
+configFile=home+"/.config/TVShowsBox/TVShowsBox.conf"
 configFolder=home+"/.config/TVShowsBox"
 
 class bcolors:
