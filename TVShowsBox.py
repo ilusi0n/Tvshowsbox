@@ -215,26 +215,42 @@ def main(argv):
         createDatabase()
 
     if arg == "add" or arg=="-a":
+        if not (len(args)>0):
+            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
+        listEntry(args)
         createEntry(args)
         return
 
     if arg == "edit" or arg=="-e":
+        if not (len(args)>0):
+            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
+        listEntry(args)
         modifyEntry(args)
         return
 
     if arg == "delete" or arg=="-d":
+        if not (len(args)>0):
+            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
+        listEntry(args)
         deleteEntry(args)
         return
 
     if arg == "list" or arg=="-l":
+        if not (len(args)>0):
+            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
         listEntry(args)
         return
 
     if arg == "listAll" or arg=="-la":
+        if not (len(args)==0):
+            sys.exit(bcolors.FAIL + "Error: This option doesn't take arguments" + bcolors.ENDC)
         listEntry(args)
         return
 
     if arg == "watch" or arg=="-w":
+        if not (len(args)>0):
+            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
+        listEntry(args)
         watchEntry(args)
         return
 
