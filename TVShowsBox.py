@@ -172,7 +172,7 @@ def listEntry(args):
     conn = sqlite3.connect(database)
     c = conn.cursor()
     t = (name,)
-    sql = "SELECT * from watchingSeries WHERE Name LIKE ?"
+    sql = "SELECT * from watchingSeries WHERE Name LIKE ? ORDER BY Name"
     print("")
     for row in c.execute(sql,t):
         name=row[0]
@@ -183,22 +183,6 @@ def listEntry(args):
         print(bcolors.GREEN + "Episode: "+episode + bcolors.ENDC)
         print("")
     conn.close()
-
-def listAllEntries():
-    database = getDataBaseName()
-    conn = sqlite3.connect(database)
-    c = conn.cursor()
-    sql = "SELECT * from watchingSeries ORDER BY Name"
-    for row in c.execute(sql):
-        name = row[0]
-        season=str(row[1])
-        episode=str(row[2])
-        print(bcolors.HEADER + "Name: "+name + bcolors.ENDC)
-        print(bcolors.BLUE + "Season: "+season + bcolors.ENDC)
-        print(bcolors.GREEN + "Episode: "+episode + bcolors.ENDC)
-        print("")
-    conn.close()
-
 
 def showHelp():
     print(bcolors.HEADER+ "TVShowsBox v0.1"+ bcolors.ENDC)
@@ -247,7 +231,7 @@ def main(argv):
         return
 
     if arg == "listAll" or arg=="-la":
-        listAllEntries()
+        listEntry(args)
         return
 
     if arg == "watch" or arg=="-w":
