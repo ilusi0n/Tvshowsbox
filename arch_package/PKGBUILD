@@ -17,7 +17,6 @@ build() {
 
 package() {
     cd "$srcdir"
-    echo "$srcdir"
     install -Dm755 TVShowsBox.py "$pkgdir/usr/bin/TVShowsBox"
     install -D TVShowsBox.conf "${pkgdir}"/usr/share/doc/TVShowsBox/TVShowsBox.conf
 }
