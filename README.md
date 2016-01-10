@@ -21,15 +21,14 @@
 
 ### Features ###
 
-* Add TV Shows
-* Delete TV Shows
+* Add TV Shows and Animes
+* Delete TV Shows and Animes
 * Mark next episode as watched
-* List a specific TV Show (support partial search)
-* List all TV Shows
+* List a specific TV Show and Animes (support partial search)
+* List all TV Shows and Animes
 
 ### Features to be developed ###
 
 * Import/export the database (to and from a file)
 * Mark a specific episode as watched only if is greater than the current watched episode
 * Wanted list for TV Shows, movies and animes
-* Support for animes

@@ -9,6 +9,8 @@ from os.path import expanduser
 home = expanduser("~")
 configFile = home + "/.config/TVShowsBox/TVShowsBox.conf"
 configFolder = home + "/.config/TVShowsBox"
+AnimeDB = 'Animes'
+SeriesDB = 'Series'
 
 
 class bcolors:
@@ -30,15 +32,23 @@ def printErrorMessage(message):
     return bcolors.FAIL + message + bcolors.ENDC
 
 
-def printTVShowName(message):
+def printHeader(message):
     return bcolors.HEADER + message + bcolors.ENDC
 
 
-def printSeasonNumber(message):
+def printBoldHeader(message):
+    return bcolors.BOLD + bcolors.HEADER + message + bcolors.ENDC + bcolors.ENDC
+
+
+def printBlue(message):
     return bcolors.BLUE + message + bcolors.ENDC
 
 
-def printEpisodeNumber(message):
+def printBoldBlue(message):
+    return bcolors.BOLD + bcolors.BLUE + message + bcolors.ENDC + bcolors.ENDC
+
+
+def printGreen(message):
     return bcolors.GREEN + message + bcolors.ENDC
 
 
@@ -76,17 +86,22 @@ def createDatabase():
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    c.execute("CREATE TABLE watchingSeries (Name text, Season integer, Episode integer)")
+    sql = 'CREATE TABLE {tn} (Name text PRIMARY KEY, Season integer, Episode integer)'.format(tn=SeriesDB)
+    c.execute(sql)
+    sql = 'CREATE TABLE {tn} (Name text PRIMARY KEY, Episode integer)'.format(tn=AnimeDB)
+    c.execute(sql)
     conn.commit()
     conn.close()
 
 
-def searchEntry(name):
+def searchEntry(name, tableName):
     database = getDataBaseName()
     result = True
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    c.execute("SELECT rowid FROM watchingSeries WHERE Name LIKE ?", (name,))
+    t = (name,)
+    sql = "SELECT rowid FROM {tn} WHERE Name LIKE ?".format(tn=tableName)
+    c.execute(sql, t)
     data = c.fetchall()
     if len(data) == 0:
         result = False
@@ -95,53 +110,80 @@ def searchEntry(name):
 
 
 #this entry must exist!
-def getEntry(name):
+def getEntry(name, tableName):
     database = getDataBaseName()
     result = True
     conn = sqlite3.connect(database)
     c = conn.cursor()
     t = (name,)
-    sql = "SELECT * FROM watchingSeries WHERE Name = ?"
+    sql = "SELECT * FROM {tn} WHERE Name = ?".format(tn=tableName)
     for row in c.execute(sql, t):
         result = row
     conn.close()
     return result
 
 
+def createAnimeEntry(args):
+    database = getDataBaseName()
+    name = " ".join(args)
+
+    if searchEntry(name, AnimeDB) == True:
+        message = printErrorMessage("The Anime %s already exists on the database" % (name))
+        sys.exit(message)
+
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    t = (name,)
+    sql = "INSERT INTO {tn} VALUES (?,'0')".format(tn=AnimeDB)
+    c.execute(sql, t)
+    conn.commit()
+    conn.close()
+    message = printHeader("The Anime %s was added to the database" % (name))
+    print(message)
+
+
 def createEntry(args):
     database = getDataBaseName()
     name = " ".join(args)
 
-    if searchEntry(name) == True:
+    if searchEntry(name, SeriesDB) == True:
         message = printErrorMessage("The TV Show %s already exists on the database" % (name))
         sys.exit(message)
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
     t = (name,)
-    sql = "INSERT INTO watchingSeries VALUES (?,'1','0')"
+    sql = "INSERT INTO {tn} VALUES (?,'1','0')".format(tn=SeriesDB)
     c.execute(sql, t)
     conn.commit()
     conn.close()
-    message = printTVShowName("The TV Show %s was added to the database" % (name))
+    message = printHeader("The TV Show %s was added to the database" % (name))
     print(message)
 
 
 def deleteEntry(args):
     database = getDataBaseName()
     name = " ".join(args)
-    if searchEntry(name) == False:
-        message = printErrorMessage("ERROR: That TV Show doesn't exist")
+    animeExists = searchEntry(name, AnimeDB)
+    seriesExists = searchEntry(name, SeriesDB)
+
+    if animeExists == False and seriesExists == False:
+        message = printErrorMessage("ERROR: That TVShow or Anime called %s doesn't exist" % (name))
         sys.exit(message)
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
     t = (name,)
-    sql = "DELETE from watchingSeries WHERE Name = ?"
-    c.execute(sql, t)
+    if (animeExists == True):
+        sql = "DELETE from {tn} WHERE Name = ?".format(tn=AnimeDB)
+        c.execute(sql, t)
+    else:
+        sql = "DELETE from {tn} WHERE Name = ?".format(tn=SeriesDB)
+        c.execute(sql, t)
+
     conn.commit()
     conn.close()
-    message = printTVShowName("The TV Show %s was deleted from the database" % (name))
+    message = printHeader("%s was deleted from the database" % (name))
     print(message)
 
 
@@ -159,29 +201,44 @@ def modifyEntry(args):
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    sql = "UPDATE watchingSeries SET Season = ?, Episode = ?  WHERE Name = ?"
+    sql = "UPDATE {tn} SET Season = ?, Episode = ?  WHERE Name = ?".format(tn=SeriesDB)
     c.execute(sql, t)
     conn.commit()
     conn.close()
 
 
-def watchEntry(args):
-    database = getDataBaseName()
-    name = " ".join(args)
-    if searchEntry(name) == False:
-        message = printErrorMessage("ERROR: That TV Show doesn't exist")
-        print(message)
-        return
+def watchAnime(name):
 
-    entry = getEntry(name)
+    database = getDataBaseName()
+    entry = getEntry(name, AnimeDB)
+    name = entry[0]
+    episode = entry[1]
+
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    t = (episode + 1, name,)
+    sql = "UPDATE {tn} SET Episode = ?  WHERE Name = ?".format(tn=AnimeDB)
+    c.execute(sql, t)
+    conn.commit()
+    conn.close()
+    nEntry = getEntry(name, AnimeDB)
+    episode = str(nEntry[1])
+    print("")
+    print(printWarningMessage("Update\n"))
+    print(printHeader("Name: %s" % (name)))
+    print(printGreen("Episode: %s\n" % (episode)))
+
+
+def watchSerie(name):
+    database = getDataBaseName()
+    entry = getEntry(name, SeriesDB)
     name = entry[0]
     season = entry[1]
     episode = entry[2]
 
-    print(printTVShowName("Name: %s" % (name)))
-    print(printSeasonNumber("Season: %s" % (season)))
-    print(printEpisodeNumber("Episode: %s" % (episode)))
-    print("")
+    print(printHeader("Name: %s" % (name)))
+    print(printBlue("Season: %s" % (season)))
+    print(printGreen("Episode: %s\n" % (episode)))
 
     response = input("New Season? (y/n): ")
     if response == "y":
@@ -194,52 +251,87 @@ def watchEntry(args):
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
-    sql = "UPDATE watchingSeries SET Season = ?, Episode = ?  WHERE Name = ?"
+    sql = "UPDATE {tn} SET Season = ?, Episode = ?  WHERE Name = ?".format(tn=SeriesDB)
     c.execute(sql, t)
     conn.commit()
     conn.close()
-    nEntry = getEntry(name)
+    nEntry = getEntry(name, SeriesDB)
     season = str(nEntry[1])
     episode = str(nEntry[2])
     print("")
-    print(printWarningMessage("Update"))
-    print("")
-    print(printTVShowName("Name: %s" % (name)))
-    print(printSeasonNumber("Season: %s" % (season)))
-    print(printEpisodeNumber("Episode: %s" % (episode)))
-    print("")
+    print(printWarningMessage("Update\n"))
+    print(printHeader("Name: %s" % (name)))
+    print(printBlue("Season: %s" % (season)))
+    print(printGreen("Episode: %s\n" % (episode)))
+
+
+def watchEntry(args):
+    database = getDataBaseName()
+    name = " ".join(args)
+    seriesExists = searchEntry(name, SeriesDB)
+    animeExists = searchEntry(name, AnimeDB)
+
+    if seriesExists == False and animeExists == False:
+        message = printErrorMessage("ERROR: That TV Show or Anime doesn't exist")
+        sys.exit(message)
+
+    if (seriesExists == True):
+        watchSerie(name)
+    else:
+        watchAnime(name)
 
 
 def listEntry(args):
     database = getDataBaseName()
     name = "%" + " ".join(args) + "%"
-    if searchEntry(name) == False:
-        message = printErrorMessage("ERROR: That TV Show doesn't exist")
-        print(message)
-        return
+    animeExists = searchEntry(name, AnimeDB)
+    seriesExists = searchEntry(name, SeriesDB)
+    if animeExists == False and seriesExists == False:
+        message = printWarningMessage("Warning: Database is empty")
+        sys.exit(message)
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
     t = (name,)
-    sql = "SELECT * from watchingSeries WHERE Name LIKE ? ORDER BY Name"
+
     print("")
-    for row in c.execute(sql, t):
-        name = row[0]
-        season = str(row[1])
-        episode = str(row[2])
-        print(printTVShowName("Name: %s" % (name)))
-        print(printSeasonNumber("Season: %s" % (season)))
-        print(printEpisodeNumber("Episode: %s" % (episode)))
-        print("")
-    conn.close()
+    print(printBoldBlue(AnimeDB + "\n"))
+
+    if (animeExists == True):
+        sql = 'SELECT * from {tn} WHERE Name LIKE ? ORDER BY Name'.format(tn=AnimeDB)
+        for row in c.execute(sql, t):
+            name = row[0]
+            episode = str(row[1])
+            print(printHeader("Name: %s" % (name)))
+            print(printBlue("Episode: %s\n" % (episode)))
+    else:
+        print(printErrorMessage("No Animes on the database\n"))
+
+    print(printBoldBlue(SeriesDB))
+    print("")
+
+    if (seriesExists == True):
+        sql = 'SELECT * from {tn} WHERE Name LIKE ? ORDER BY Name'.format(tn=SeriesDB)
+        for row in c.execute(sql, t):
+            name = row[0]
+            season = str(row[1])
+            episode = str(row[2])
+            print(printHeader("Name: %s" % (name)))
+            print(printBlue("Season: %s" % (season)))
+            print(printGreen("Episode: %s\n" % (episode)))
+    else:
+        print(printErrorMessage("No TV Shows with on the database\n"))
+
+    if (animeExists == True or seriesExists == True):
+        conn.close()
 
 
 def showHelp():
     print(bcolors.HEADER + "TVShowsBox v0.1" + bcolors.ENDC)
-    print("A script written in python that manages all your TV Shows in a sqlite database.")
-    print("")
+    print("A script written in python that manages all your TV Shows in a sqlite database.\n")
     print("Options:")
-    print("\tadd, -a \tNAME \tName of the show \tAdd a TV show")
+    print("\taddTVShow \tNAME \tName of the TV Show \tAdd a TV Show")
+    print("\taddAnime \tNAME \tName of the Anime \tAdd a Anime")
     print("\tedit, -e \tNAME SEASON EPISODE \tName of the show, Season number, Episode number \tEdit a TV Show")
     print("\tdelete, -d \tNAME \tName of the show \tDelete a TV Show")
     print("\tlist, -l \tNAME \tName of the show \tList a TV Show (it shows partial results)")
@@ -267,12 +359,18 @@ def main(argv):
     if checkDatabase() == False:
         createDatabase()
 
-    if arg == "add" or arg == "-a":
+    if args == "addTVShow":
         if not (len(args) > 0):
             message = printErrorMessage("Error: This option needs the name of the TV Show")
             sys.exit(message)
-            sys.exit(message)
         createEntry(args)
+        return
+
+    if arg == "addAnime":
+        if not (len(args) > 0):
+            message = printErrorMessage("Error: This option needs the name of the Anime")
+            sys.exit(message)
+        createAnimeEntry(args)
         return
 
     if arg == "edit" or arg == "-e":
@@ -284,14 +382,14 @@ def main(argv):
 
     if arg == "delete" or arg == "-d":
         if not (len(args) > 0):
-            message = printErrorMessage("Error: This option needs the name of the TV Show")
+            message = printErrorMessage("Error: This option needs the name of the TV Show or Anime")
             sys.exit(message)
         deleteEntry(args)
         return
 
     if arg == "list" or arg == "-l":
         if not (len(args) > 0):
-            message = printErrorMessage("Error: This option needs the name of the TV Show")
+            message = printErrorMessage("Error: This option needs the name of the TV Show or the Anime")
             sys.exit(message)
         listEntry(args)
         return
@@ -305,7 +403,7 @@ def main(argv):
 
     if arg == "watch" or arg == "-w":
         if not (len(args) > 0):
-            message = printErrorMessage("Error: This option needs the name of the TV Show")
+            message = printErrorMessage("Error: This option needs the name of the TV Show or the Anime")
             sys.exit(message)
         watchEntry(args)
         return
