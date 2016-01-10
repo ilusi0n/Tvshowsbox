@@ -327,10 +327,12 @@ def listEntry(args):
             print(printHeader("Name: %s" % (name)))
             print(printBlue("Episode: %s\n" % (episode)))
     else:
-        print(printErrorMessage("No Animes on the database\n"))
+        if name == "":
+            print(printErrorMessage("No Animes on the database\n"))
+        else:
+            print(printErrorMessage("No Animes with that name\n"))
 
-    print(printBoldBlue(SeriesDB))
-    print("")
+    print(printBoldBlue(SeriesDB) + "\n")
 
     if (seriesExists == True):
         sql = 'SELECT * from {tn} WHERE Name LIKE ? ORDER BY Name'.format(tn=SeriesDB)
@@ -342,7 +344,10 @@ def listEntry(args):
             print(printBlue("Season: %s" % (season)))
             print(printGreen("Episode: %s\n" % (episode)))
     else:
-        print(printErrorMessage("No TV Shows on the database\n"))
+        if name == "":
+            print(printErrorMessage("No TV Shows on the database\n"))
+        else:
+            print(printErrorMessage("No TV Shows with that name\n"))
 
     if (animeExists == True or seriesExists == True):
         conn.close()
