@@ -8,9 +8,7 @@ license=('GPL')
 depends=('sqlite' 'python>=3.4')
 source=("TVShowsBox.py")
 
-md5sums=('4ad5337338eeff9f0e0429c151faaad6'
-         'ded9fa8a6f295d34b11e852c1cd48062'
-         'b1b74c67e04ea5ca142075e8256f562f')
+md5sums=('SKIP')
 
 build() {
     cd "$srcdir"
