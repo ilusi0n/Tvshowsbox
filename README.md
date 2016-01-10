@@ -27,9 +27,9 @@
 * List a specific TV Show and Animes (support partial search)
 * List all TV Shows and Animes
 * Support for a wanted list
+* On add, TV Show, anime or movie is removed if is on the wanted list
 
 ### Features to be developed ###
 
 * Import/export the database (to and from a file)
 * Mark a specific episode as watched only if is greater than the current watched episode
-* When a new TV Show, Anime or Movie is added to one of the lists and is on wanted list, it must be removed

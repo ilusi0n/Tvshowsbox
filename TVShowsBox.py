@@ -155,11 +155,18 @@ def createAnimeEntry(args):
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
+
+    #remove from the wanted list if exists
+    existsWanted = searchEntry(name, WantedDB)
+    if (existsWanted == True):
+        deleteEntryNow(name, WantedDB)
+
     t = (name,)
     sql = "INSERT INTO {tn} VALUES (?,'0')".format(tn=AnimeDB)
     c.execute(sql, t)
     conn.commit()
     conn.close()
+
     message = printHeader("The Anime %s was added to the database" % (name))
     print(message)
 
@@ -174,6 +181,12 @@ def createEntry(args):
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
+
+    #remove from the wanted list if exists
+    existsWanted = searchEntry(name, WantedDB)
+    if (existsWanted == True):
+        deleteEntryNow(name, WantedDB)
+
     t = (name,)
     sql = "INSERT INTO {tn} VALUES (?,'1','0')".format(tn=SeriesDB)
     c.execute(sql, t)
@@ -183,28 +196,35 @@ def createEntry(args):
     print(message)
 
 
+def deleteEntryNow(name, tableName):
+    database = getDataBaseName()
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    t = (name,)
+    sql = "DELETE from {tn} WHERE Name = ?".format(tn=tableName)
+    c.execute(sql, t)
+    conn.commit()
+    conn.close()
+
+
 def deleteEntry(args):
     database = getDataBaseName()
     name = " ".join(args)
     animeExists = searchEntry(name, AnimeDB)
     seriesExists = searchEntry(name, SeriesDB)
+    wantedExists = searchEntry(name, WantedDB)
 
-    if animeExists == False and seriesExists == False:
-        message = printErrorMessage("ERROR: That TVShow or Anime called %s doesn't exist" % (name))
+    if animeExists == False and seriesExists == False and wantedExists == True:
+        message = printErrorMessage("ERROR: That TVShow, Anime or Movie called %s doesn't exist" % (name))
         sys.exit(message)
 
-    conn = sqlite3.connect(database)
-    c = conn.cursor()
-    t = (name,)
     if (animeExists == True):
-        sql = "DELETE from {tn} WHERE Name = ?".format(tn=AnimeDB)
-        c.execute(sql, t)
-    else:
-        sql = "DELETE from {tn} WHERE Name = ?".format(tn=SeriesDB)
-        c.execute(sql, t)
+        deleteEntryNow(name, AnimeDB)
+    elif seriesExists == True:
+        deleteEntryNow(name, SeriesDB)
+    elif wantedExists == true:
+        deleteEntryNow(name, WantedDB)
 
-    conn.commit()
-    conn.close()
     message = printHeader("%s was deleted from the database" % (name))
     print(message)
 
@@ -358,7 +378,7 @@ def listWantedEntries(args):
     name = "%" + " ".join(args) + "%"
     wantedListExists = searchEntry(name, WantedDB)
     if wantedListExists == False:
-        message = printWarningMessage("Warning: No Animes/TV Shows/Movies on wanted list")
+        message = printWarningMessage("Warning: No Animes, TV Shows or Movies on wanted list")
         sys.exit(message)
 
     conn = sqlite3.connect(database)
@@ -410,7 +430,7 @@ def main(argv):
     if checkDatabase() == False:
         createDatabase()
 
-    if args == "addTVShow":
+    if arg == "addTVShow":
         if not (len(args) > 0):
             message = printErrorMessage("Error: This option needs the name of the TV Show")
             sys.exit(message)
