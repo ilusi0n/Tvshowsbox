@@ -279,7 +279,6 @@ def main(argv):
         if not (len(args) > 0):
             message = printErrorMessage("Error: This option needs the name of the TV Show")
             sys.exit(message)
-        listEntry(args)
         modifyEntry(args)
         return
 
@@ -308,7 +307,6 @@ def main(argv):
         if not (len(args) > 0):
             message = printErrorMessage("Error: This option needs the name of the TV Show")
             sys.exit(message)
-        listEntry(args)
         watchEntry(args)
         return
 
