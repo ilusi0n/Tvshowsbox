@@ -3,7 +3,7 @@
 
 ### Who are you? ###
 
-* My name is Hugo Cabrita and newer to python
+* My name is Hugo Cabrita and I'm new to python
 
 ### What is this repository for? ###
 
@@ -25,7 +25,7 @@
 * Delete TV Shows
 * Mark next episode as watched
 * List a specific TV Show (support partial search)
-* List all TV Shows (support partial search)
+* List all TV Shows
 
 ### Features to be developed ###
 
