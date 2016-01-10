@@ -125,8 +125,10 @@ def watchEntry(args):
     response = input("New Season? (y/n): ")
     if response == "y":
         t = (season+1,1,name,)
-    else:
+    elif response == "n":
         t = (season,episode+1,name,)
+    else:
+        sys.exit(bcolors.FAIL + "ERROR: That answer is not valid. Aborting..." + bcolors.ENDC)
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
