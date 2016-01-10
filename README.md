@@ -32,5 +32,4 @@
 
 * Import/export the database (to and from a file)
 * Mark a specific episode as watched only if is greater than the current watched episode
-* When a new TV Show, Anime or Movie is added to one of the lists and is on
-* wanted list, it must be removed
+* When a new TV Show, Anime or Movie is added to one of the lists and is on wanted list, it must be removed
