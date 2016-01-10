@@ -11,6 +11,7 @@ configFile = home + "/.config/TVShowsBox/TVShowsBox.conf"
 configFolder = home + "/.config/TVShowsBox"
 AnimeDB = 'Animes'
 SeriesDB = 'Series'
+WantedDB = 'Wanted'
 
 
 class bcolors:
@@ -90,6 +91,8 @@ def createDatabase():
     c.execute(sql)
     sql = 'CREATE TABLE {tn} (Name text PRIMARY KEY, Episode integer)'.format(tn=AnimeDB)
     c.execute(sql)
+    sql = 'CREATE TABLE {tn} (Name text PRIMARY KEY)'.format(tn=WantedDB)
+    c.execute(sql)
     conn.commit()
     conn.close()
 
@@ -121,6 +124,25 @@ def getEntry(name, tableName):
         result = row
     conn.close()
     return result
+
+
+def createWantedEntry(args):
+    database = getDataBaseName()
+    name = " ".join(args)
+
+    if searchEntry(name, WantedDB) == True:
+        message = printErrorMessage("The %s is already wanted" % (name))
+        sys.exit(message)
+
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    t = (name,)
+    sql = "INSERT INTO {tn} VALUES (?)".format(tn=WantedDB)
+    c.execute(sql, t)
+    conn.commit()
+    conn.close()
+    message = printHeader("%s was added to the wanted list" % (name))
+    print(message)
 
 
 def createAnimeEntry(args):
@@ -320,9 +342,33 @@ def listEntry(args):
             print(printBlue("Season: %s" % (season)))
             print(printGreen("Episode: %s\n" % (episode)))
     else:
-        print(printErrorMessage("No TV Shows with on the database\n"))
+        print(printErrorMessage("No TV Shows on the database\n"))
 
     if (animeExists == True or seriesExists == True):
+        conn.close()
+
+
+def listWantedEntries(args):
+    database = getDataBaseName()
+    name = "%" + " ".join(args) + "%"
+    wantedListExists = searchEntry(name, WantedDB)
+    if wantedListExists == False:
+        message = printWarningMessage("Warning: No Animes/TV Shows/Movies on wanted list")
+        sys.exit(message)
+
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    t = (name,)
+
+    print("")
+    print(printBoldBlue("Wanted List\n"))
+
+    sql = 'SELECT * from {tn} WHERE Name LIKE ? ORDER BY Name'.format(tn=WantedDB)
+    for row in c.execute(sql, t):
+        name = row[0]
+        print(printHeader("Name: %s" % (name)))
+
+    if (wantedListExists == True):
         conn.close()
 
 
@@ -401,11 +447,25 @@ def main(argv):
         listEntry(args)
         return
 
+    if arg == "listWanted" or arg == "-lw":
+        if not (len(args) == 0):
+            message = printErrorMessage("Error: This option doesn't take arguments")
+            sys.exit(message)
+        listWantedEntries(args)
+        return
+
     if arg == "watch" or arg == "-w":
         if not (len(args) > 0):
             message = printErrorMessage("Error: This option needs the name of the TV Show or the Anime")
             sys.exit(message)
         watchEntry(args)
+        return
+
+    if arg == "want":
+        if not (len(args) > 0):
+            message = printErrorMessage("Error: This option needs the name of the TV Show or the Anime")
+            sys.exit(message)
+        createWantedEntry(args)
         return
 
     if arg == "help" or arg == "-h":
