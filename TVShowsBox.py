@@ -61,6 +61,10 @@ def getDataBaseName():
             return ""
         if "Database=" in line:
             databaseName = line.replace("Database=", "").replace('"', "").strip()
+            if databaseName == "":
+                message = printErrorMessage(
+                    "ERROR: You forgot to give a name to the database. Edit the configuration file")
+                sys.exit(message)
             return "%s/.config/TVShowsBox/%s%s" % (home, databaseName, ".db")
 
 
