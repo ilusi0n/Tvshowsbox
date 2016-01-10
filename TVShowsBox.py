@@ -107,6 +107,11 @@ def getEntry(name):
 def createEntry(args):
     database = getDataBaseName()
     name = " ".join(args)
+
+    if searchEntry(name) == True:
+        message = printErrorMessage("The TV Show %s already exists on the database" % (name))
+        sys.exit(message)
+
     conn = sqlite3.connect(database)
     c = conn.cursor()
     t = (name,)
@@ -114,13 +119,33 @@ def createEntry(args):
     c.execute(sql, t)
     conn.commit()
     conn.close()
+    message = printTVShowName("The TV Show %s was added to the database" % (name))
+    print(message)
+
+
+def deleteEntry(args):
+    database = getDataBaseName()
+    name = " ".join(args)
+    if searchEntry(name) == False:
+        message = printErrorMessage("ERROR: That TV Show doesn't exist")
+        sys.exit(message)
+
+    conn = sqlite3.connect(database)
+    c = conn.cursor()
+    t = (name,)
+    sql = "DELETE from watchingSeries WHERE Name = ?"
+    c.execute(sql, t)
+    conn.commit()
+    conn.close()
+    message = printTVShowName("The TV Show %s was deleted from the database" % (name))
+    print(message)
 
 
 def modifyEntry(args):
     database = getDataBaseName()
     name = " ".join(args)
     if searchEntry(name) == False:
-        message = printErrorMessage("ERROR: That entry doesn't exist")
+        message = printErrorMessage("ERROR: That TV Show doesn't exist")
         print(message)
         return
 
@@ -140,7 +165,7 @@ def watchEntry(args):
     database = getDataBaseName()
     name = " ".join(args)
     if searchEntry(name) == False:
-        message = printErrorMessage("ERROR: That entry doesn't exist")
+        message = printErrorMessage("ERROR: That TV Show doesn't exist")
         print(message)
         return
 
@@ -181,28 +206,11 @@ def watchEntry(args):
     print("")
 
 
-def deleteEntry(args):
-    database = getDataBaseName()
-    name = " ".join(args)
-    if searchEntry(name) == False:
-        message = printErrorMessage("ERROR: That entry doesn't exist")
-        print(message)
-        return
-
-    conn = sqlite3.connect(database)
-    c = conn.cursor()
-    t = (name,)
-    sql = "DELETE from watchingSeries WHERE Name = ?"
-    c.execute(sql, t)
-    conn.commit()
-    conn.close()
-
-
 def listEntry(args):
     database = getDataBaseName()
     name = "%" + " ".join(args) + "%"
     if searchEntry(name) == False:
-        message = printErrorMessage("ERROR: That entry doesn't exist")
+        message = printErrorMessage("ERROR: That TV Show doesn't exist")
         print(message)
         return
 
@@ -258,10 +266,9 @@ def main(argv):
 
     if arg == "add" or arg == "-a":
         if not (len(args) > 0):
-            message = printErrorMessage(
-                "Error: create the folder TVShowsBox and create the config file based on the example")
+            message = printErrorMessage("Error: This option needs the name of the TV Show")
             sys.exit(message)
-        listEntry(args)
+            sys.exit(message)
         createEntry(args)
         return
 
@@ -277,7 +284,6 @@ def main(argv):
         if not (len(args) > 0):
             message = printErrorMessage("Error: This option needs the name of the TV Show")
             sys.exit(message)
-        listEntry(args)
         deleteEntry(args)
         return
 
@@ -297,7 +303,7 @@ def main(argv):
 
     if arg == "watch" or arg == "-w":
         if not (len(args) > 0):
-            printErrorMessage("Error: This option needs the name of the TV Show")
+            message = printErrorMessage("Error: This option needs the name of the TV Show")
             sys.exit(message)
         listEntry(args)
         watchEntry(args)
