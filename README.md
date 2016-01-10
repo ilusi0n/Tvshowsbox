@@ -31,3 +31,5 @@
 
 * Import/export the database (to and from a file)
 * Mark a specific episode as watched only if is greater than the current watched episode
+* Wanted list for TV Shows, movies and animes
+* Support for animes
