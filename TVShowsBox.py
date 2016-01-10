@@ -22,10 +22,15 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
+def errorMessage(message):
+    return bcolors.FAIL + message + bcolors.ENDC
+
+
 def checkDatabase():
     database = getDataBaseName()
     if (database == ""):
-        sys.exit(bcolors.FAIL + "Error: Edit the configuration file and give the database a name" + bcolors.ENDC)
+        message = errorMessage("Error: Edit the configuration file and give the database a name")
+        sys.exit(message)
 
     return os.path.exists(database)
 
@@ -46,7 +51,8 @@ def getDataBaseName():
 def createDatabase():
     database = getDataBaseName()
     if (database == ""):
-        sys.exit(bcolors.FAIL + "Error: Edit the configuration file and give the database a name" + bcolors.ENDC)
+        message = errorMessage("Error: Edit the configuration file and give the database a name")
+        sys.exit(message)
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
@@ -98,7 +104,8 @@ def modifyEntry(args):
     database = getDataBaseName()
     name = " ".join(args)
     if searchEntry(name) == False:
-        print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
+        message = errorMessage("ERROR: That entry doesn't exist")
+        print(message)
         return
 
     season = input(bcolors.BLUE + "Season: " + bcolors.ENDC)
@@ -117,7 +124,8 @@ def watchEntry(args):
     database = getDataBaseName()
     name = " ".join(args)
     if searchEntry(name) == False:
-        print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
+        message = errorMessage("ERROR: That entry doesn't exist")
+        print(message)
         return
 
     entry = getEntry(name)
@@ -136,7 +144,8 @@ def watchEntry(args):
     elif response == "n":
         t = (season, episode + 1, name,)
     else:
-        sys.exit(bcolors.FAIL + "ERROR: That answer is not valid. Aborting..." + bcolors.ENDC)
+        message = errorMessage("ERROR: That answer is not valid. Aborting...")
+        sys.exit(message)
 
     conn = sqlite3.connect(database)
     c = conn.cursor()
@@ -160,7 +169,8 @@ def deleteEntry(args):
     database = getDataBaseName()
     name = " ".join(args)
     if searchEntry(name) == False:
-        print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
+        message = errorMessage("ERROR: That entry doesn't exist")
+        print(message)
         return
 
     conn = sqlite3.connect(database)
@@ -176,7 +186,8 @@ def listEntry(args):
     database = getDataBaseName()
     name = "%" + " ".join(args) + "%"
     if searchEntry(name) == False:
-        print(bcolors.FAIL + "ERROR: That entry doesn't exist" + bcolors.ENDC)
+        message = errorMessage("ERROR: That entry doesn't exist")
+        print(message)
         return
 
     conn = sqlite3.connect(database)
@@ -213,57 +224,64 @@ def main(argv):
     args = argv[1:]
 
     if len(args) == 0:
-        print(bcolors.FAIL +
-              "Error: It's required at least 1 argument. Use the -h or help to see which options are available" +
-              bcolors.ENDC)
+        message = errorMessage(
+            "Error: It's required at least 1 argument. Use the -h or help to see which options are available")
+        print(message)
         return
 
     arg = args[0]
     args = args[1:]
 
     if not os.path.exists(configFolder):
-        sys.exit(bcolors.FAIL + "Error: create the folder TVShowsBox and create the config file based on the example" +
-                 bcolors.ENDC)
+        message = errorMessage("Error: create the folder TVShowsBox and create the config file based on the example")
+        sys.exit(message)
 
     if checkDatabase() == False:
         createDatabase()
 
     if arg == "add" or arg == "-a":
         if not (len(args) > 0):
-            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
+            message = errorMessage(
+                "Error: create the folder TVShowsBox and create the config file based on the example")
+            sys.exit(message)
         listEntry(args)
         createEntry(args)
         return
 
     if arg == "edit" or arg == "-e":
         if not (len(args) > 0):
-            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
+            message = errorMessage("Error: This option needs the name of the TV Show")
+            sys.exit(message)
         listEntry(args)
         modifyEntry(args)
         return
 
     if arg == "delete" or arg == "-d":
         if not (len(args) > 0):
-            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
+            message = errorMessage("Error: This option needs the name of the TV Show")
+            sys.exit(message)
         listEntry(args)
         deleteEntry(args)
         return
 
     if arg == "list" or arg == "-l":
         if not (len(args) > 0):
-            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
+            message = errorMessage("Error: This option needs the name of the TV Show")
+            sys.exit(message)
         listEntry(args)
         return
 
     if arg == "listAll" or arg == "-la":
         if not (len(args) == 0):
-            sys.exit(bcolors.FAIL + "Error: This option doesn't take arguments" + bcolors.ENDC)
+            message = errorMessage("Error: This option doesn't take arguments")
+            sys.exit(message)
         listEntry(args)
         return
 
     if arg == "watch" or arg == "-w":
         if not (len(args) > 0):
-            sys.exit(bcolors.FAIL + "Error: This option needs the name of the TV Show" + bcolors.ENDC)
+            errorMessage("Error: This option needs the name of the TV Show")
+            sys.exit(message)
         listEntry(args)
         watchEntry(args)
         return
