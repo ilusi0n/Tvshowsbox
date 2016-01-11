@@ -403,10 +403,12 @@ def showHelp():
     print("Options:")
     print("\taddTVShow \tNAME \tName of the TV Show \tAdd a TV Show")
     print("\taddAnime \tNAME \tName of the Anime \tAdd a Anime")
+    print("\twant, -aw \tNAME \tName of the show \tAdd the Show to the Wanted List")
     print("\tedit, -e \tNAME SEASON EPISODE \tName of the show, Season number, Episode number \tEdit a TV Show")
     print("\tdelete, -d \tNAME \tName of the show \tDelete a TV Show")
     print("\tlist, -l \tNAME \tName of the show \tList a TV Show (it shows partial results)")
-    print("\tlistAll, -la \tNAME \tName of the show \tList all the TV Shows")
+    print("\tlistAll, -la \tNAME \tName of the show \tList all the TV Shows (except the wanted ones)")
+    print("\tlistWanted, -lw \tNAME \tName of the show \tList all the Shows on Wanted List")
     print("\twatch, -w \tNAME \tName of the show \tMark watch the next episode")
     print("\thelp, -h \tShow this information")
 
@@ -446,21 +448,21 @@ def main(argv):
 
     if arg == "edit" or arg == "-e":
         if not (len(args) > 0):
-            message = printErrorMessage("Error: This option needs the name of the TV Show")
+            message = printErrorMessage("Error: This option needs the name of Show")
             sys.exit(message)
         modifyEntry(args)
         return
 
     if arg == "delete" or arg == "-d":
         if not (len(args) > 0):
-            message = printErrorMessage("Error: This option needs the name of the TV Show or Anime")
+            message = printErrorMessage("Error: This option needs the name of Show")
             sys.exit(message)
         deleteEntry(args)
         return
 
     if arg == "list" or arg == "-l":
         if not (len(args) > 0):
-            message = printErrorMessage("Error: This option needs the name of the TV Show or the Anime")
+            message = printErrorMessage("Error: This option needs the name of Show")
             sys.exit(message)
         listEntry(args)
         return
@@ -481,14 +483,14 @@ def main(argv):
 
     if arg == "watch" or arg == "-w":
         if not (len(args) > 0):
-            message = printErrorMessage("Error: This option needs the name of the TV Show or the Anime")
+            message = printErrorMessage("Error: This option needs the name of the Show")
             sys.exit(message)
         watchEntry(args)
         return
 
-    if arg == "want":
+    if arg == "want" or arg == "-aw":
         if not (len(args) > 0):
-            message = printErrorMessage("Error: This option needs the name of the TV Show or the Anime")
+            message = printErrorMessage("Error: This option needs the name Show")
             sys.exit(message)
         createWantedEntry(args)
         return
