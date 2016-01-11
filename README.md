@@ -39,6 +39,6 @@
 
 * Hugo Cabrita -  Creator, Developer
 
-## Can I use, modify, contribute or anything else with this? ###
+### Can I use, modify, contribute or anything else? ####
 
-* Of course you can, as long as you give the proper credit
+* Of course you can, as long as you give the proper credits
