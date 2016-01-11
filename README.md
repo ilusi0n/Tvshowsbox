@@ -1,6 +1,6 @@
 # README #
 
-### What is this repository for? ###
+### TVShowsBox ###
 
 * A script written in python that manages all your TV Shows in a sqlite database.
 * Version 0.1
@@ -26,7 +26,7 @@
 * Support for a wanted list
 * TV Show or Anime is removed from the Wanted List, if the user add it to the currently watched shows
 
-### Features to be developed ###
+### TODO ###
 
 * Import/export the database (to and from a file)
 * Mark a specific episode as watched only if is greater than the current watched episode
@@ -38,3 +38,7 @@
 ### Team ###
 
 * Hugo Cabrita -  Creator, Developer
+
+## Can I use, modify, contribute or anything else with this? ###
+
+* Of course you can, as long as you give the proper credit
