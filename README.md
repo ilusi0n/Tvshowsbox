@@ -31,7 +31,7 @@
 * Import/export the database (to and from a file)
 * Mark a specific episode as watched only if is greater than the current watched episode
 
-### Features that you can think that will not be worked at this point ###
+### Features that you can think of that will not be worked at this point ###
 
 * Security
 
