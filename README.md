@@ -24,10 +24,11 @@
 * Add TV Shows and Animes
 * Delete TV Shows and Animes
 * Mark next episode as watched
-* List a specific TV Show and Animes (support partial search)
+* Suport for partial search
 * List all TV Shows and Animes
+* List Wanted List
 * Support for a wanted list
-* On add, TV Show, anime or movie is removed if is on the wanted list
+* TV Show or Anime is removed from the Wanted List, if the user add it to the currently watched shows
 
 ### Features to be developed ###
 
