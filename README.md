@@ -3,6 +3,7 @@
 ### TVShowsBox ###
 
 * A script written in python that manages all your TV Shows in a sqlite database.
+* WIP
 * Version 0.1
 
 ### Why you did this? ###
