@@ -6,10 +6,10 @@ arch=('any')
 url="https://bitbucket.org/lanikai/tvshowsbox"
 license=('GPL')
 depends=('sqlite' 'python>=3.4')
-source=("TVShowsBox.py" "TVShowsBox.conf")
+source=("TVShowsBox.py")
 install=${pkgname}.install
 
-md5sums=('SKIP' 'SKIP')
+md5sums=('SKIP')
 
 build() {
     cd "$srcdir"
@@ -18,5 +18,4 @@ build() {
 package() {
     cd "$srcdir"
     install -Dm755 TVShowsBox.py "$pkgdir/usr/bin/TVShowsBox"
-    install -D TVShowsBox.conf "${pkgdir}"/usr/share/doc/TVShowsBox/TVShowsBox.conf
 }
