@@ -143,7 +143,7 @@ def deleteShow(name, message):
         table_name = WANTED_DB
 
     if table_name == "" and message == True:
-        sys.exit(printErrorMessage("ERROR: %s doesn't exist" % (name)))
+        sys.exit(printErrorMessage("Error: %s doesn't exist" % (name)))
 
     conn = sqlite3.connect(DATABASE_URL)
     c = conn.cursor()
@@ -160,7 +160,7 @@ def deleteShow(name, message):
 def modifyEntry(args):
     name = " ".join(args)
     if searchEntry(name) == False:
-        message = printErrorMessage("ERROR: That TV Show doesn't exist")
+        message = printErrorMessage("Error: That TV Show doesn't exist")
         print(message)
         return
 
@@ -212,7 +212,7 @@ def watchSerie(name):
     elif response == "n":
         t = (season, episode + 1, name,)
     else:
-        message = printErrorMessage("ERROR: That answer is not valid. Aborting...")
+        message = printErrorMessage("Error: That answer is not valid. Aborting...")
         sys.exit(message)
 
     conn = sqlite3.connect(DATABASE_URL)
@@ -237,7 +237,7 @@ def watchEntry(args):
     animeExists = searchEntry(name, ANIME_DB)
 
     if seriesExists == False and animeExists == False:
-        message = printErrorMessage("ERROR: That TV Show or Anime doesn't exist")
+        message = printErrorMessage("Error: That TV Show or Anime doesn't exist")
         sys.exit(message)
 
     if (seriesExists == True):
@@ -246,37 +246,42 @@ def watchEntry(args):
         watchAnime(name)
 
 
-def listEntry(args):
+def listAnimes(args):
     name = "%" + "".join(args) + "%"
     animeExists = searchEntry(name, ANIME_DB)
-    seriesExists = searchEntry(name, SERIES_DB)
-    if animeExists == False and seriesExists == False:
-        message = printWarningMessage("Warning: Database is empty")
-        sys.exit(message)
-
-    conn = sqlite3.connect(DATABASE_URL)
-    c = conn.cursor()
-    t = (name,)
 
     print("")
     print(printBoldBlue(ANIME_DB + "\n"))
 
     if (animeExists == True):
+        conn = sqlite3.connect(DATABASE_URL)
+        c = conn.cursor()
+        t = (name,)
         sql = 'SELECT * from {tn} WHERE Name LIKE ? ORDER BY Name'.format(tn=ANIME_DB)
         for row in c.execute(sql, t):
             name = row[0]
             episode = str(row[1])
             print(printHeader("Name: %s" % (name)))
             print(printBlue("Episode: %s\n" % (episode)))
+        conn.close()
+
     else:
         if name == "":
             print(printErrorMessage("No Animes on the database\n"))
         else:
             print(printErrorMessage("No Animes with that name\n"))
 
+
+def listSeries(args):
+    name = "%" + "".join(args) + "%"
+    seriesExists = searchEntry(name, SERIES_DB)
+
     print(printBoldBlue(SERIES_DB) + "\n")
 
     if (seriesExists == True):
+        conn = sqlite3.connect(DATABASE_URL)
+        c = conn.cursor()
+        t = (name,)
         sql = 'SELECT * from {tn} WHERE Name LIKE ? ORDER BY Name'.format(tn=SERIES_DB)
         for row in c.execute(sql, t):
             name = row[0]
@@ -285,17 +290,15 @@ def listEntry(args):
             print(printHeader("Name: %s" % (name)))
             print(printBlue("Season: %s" % (season)))
             print(printGreen("Episode: %s\n" % (episode)))
+        conn.close()
     else:
         if name == "":
             print(printErrorMessage("No TV Shows on the database\n"))
         else:
             print(printErrorMessage("No TV Shows with that name\n"))
 
-    if (animeExists == True or seriesExists == True):
-        conn.close()
 
-
-def listWantedEntries(args):
+def listWanted(args):
     name = "%" + " ".join(args) + "%"
     wantedListExists = searchEntry(name, WANTED_DB)
     if wantedListExists == False:
@@ -312,10 +315,8 @@ def listWantedEntries(args):
     sql = 'SELECT * from {tn} WHERE Name LIKE ? ORDER BY Name'.format(tn=WANTED_DB)
     for row in c.execute(sql, t):
         name = row[0]
-        print(printHeader("Name: %s" % (name)))
-
-    if (wantedListExists == True):
-        conn.close()
+        print(printHeader("%s" % (name)))
+    conn.close()
 
 
 def showHelp():
@@ -346,8 +347,7 @@ def main(argv):
     args = args[1:]
 
     if not os.path.exists(CONFIG_FOLDER):
-        message = printErrorMessage(
-            "Error: create the folder TVShowsBox and create the config file based on the example")
+        message = printErrorMessage("Error: create the folder TVShowsBox on your home directory")
         sys.exit(message)
 
     if checkDatabase() == False:
@@ -392,21 +392,23 @@ def main(argv):
         if not (len(args) > 0):
             message = printErrorMessage("Error: This option needs the name of Show")
             sys.exit(message)
-        listEntry(args)
+        listAnimes(args)
+        listSeries(args)
         return
 
     if arg == "list-all" or arg == "-la":
         if not (len(args) == 0):
             message = printErrorMessage("Error: This option doesn't take arguments")
             sys.exit(message)
-        listEntry(args)
+        listAnimes(args)
+        listSeries(args)
         return
 
     if arg == "list-wanted" or arg == "-lw":
         if not (len(args) == 0):
             message = printErrorMessage("Error: This option doesn't take arguments")
             sys.exit(message)
-        listWantedEntries(args)
+        listWanted(args)
         return
 
     if arg == "watch" or arg == "-w":
@@ -418,13 +420,6 @@ def main(argv):
 
     if arg == "help" or arg == "-h":
         showHelp()
-        return
-
-    if arg == "debug":
-        getDataBaseName()
-        sys.exit("nha")
-        if checkDatabase() == False:
-            createDatabase()
         return
 
     message = printErrorMessage("Error: Invalid Option! Use the -h or help to see which options are available")

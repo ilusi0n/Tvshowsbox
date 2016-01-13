@@ -1,7 +1,6 @@
 post_install() {
     echo ""
-    echo "Create a directory called TVShowsBox at your home: mkdir
-    ~/.TVShowsBox"
+    echo "run: mkdir ~/.config/TVShowsBox"
 }
 
 post_upgrade() {
