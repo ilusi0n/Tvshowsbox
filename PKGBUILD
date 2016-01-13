@@ -5,7 +5,7 @@ pkgdesc='A script written in python that manages all your TV Shows in a sqlite d
 arch=('any')
 url="https://bitbucket.org/lanikai/tvshowsbox"
 license=('GPL')
-depends=('sqlite' 'python>=3.4' ' python-clint')
+depends=('sqlite' 'python>=3.4' 'python-clint')
 source=("TVShowsBox.py")
 install=${pkgname}.install
 

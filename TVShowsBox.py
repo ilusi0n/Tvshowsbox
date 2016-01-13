@@ -276,7 +276,7 @@ def listWanted(args):
     t = (name,)
 
     print("")
-    put(colored.cyan("Wanted List\n"))
+    puts(colored.cyan("Wanted List\n"))
 
     sql = 'SELECT * from {tn} WHERE Name LIKE ? ORDER BY Name'.format(tn=WANTED_DB)
     for row in c.execute(sql, t):
@@ -295,15 +295,15 @@ def showHelp():
     print("")
     puts(columns([('Options:'), col3]))
     print("")
-    puts(columns(['-add-TVShow', col1], ['NAME', col2], ['Add a TV Show', None]))
-    puts(columns(['-add-anime', col1], ['NAME', col2], ['Add a Anime', None]))
-    puts(columns(['-want, --aw', col1], ['NAME', col2], ['Add the Show to the Wanted List', None]))
-    puts(columns(['-delete, --d', col1], ['NAME', col2], ['Delete a TV Show', None]))
-    puts(columns(['-list, --l', col1], ['NAME', col2], ['List a TV Show (it shows partial results)', None]))
-    puts(columns(['-list-all, --la', col1], ['NAME', col2], ['List all the TV Shows (except the wanted ones)', None]))
-    puts(columns(['-list-wanted, --lw', col1], ['NAME', col2], ['List all the Shows on Wanted List', None]))
-    puts(columns(['-watch, --w', col1], ['NAME', col2], ['Mark watch the next episode', None]))
-    puts(columns(['-help, --h', col1], ['NAME', col2], ['Show this information', None]))
+    puts(columns(['--add-TVShow', col1], ['NAME', col2], ['Add a TV Show', None]))
+    puts(columns(['--add-anime', col1], ['NAME', col2], ['Add a Anime', None]))
+    puts(columns(['--want, -aw', col1], ['NAME', col2], ['Add the Show to the Wanted List', None]))
+    puts(columns(['--delete, -d', col1], ['NAME', col2], ['Delete a TV Show', None]))
+    puts(columns(['--list, -l', col1], ['NAME', col2], ['List a TV Show (it shows partial results)', None]))
+    puts(columns(['--list-all, -la', col1], ['NAME', col2], ['List all the TV Shows (except the wanted ones)', None]))
+    puts(columns(['--list-wanted, -lw', col1], ['NAME', col2], ['List all the Shows on Wanted List', None]))
+    puts(columns(['--watch, -w', col1], ['NAME', col2], ['Mark watch the next episode', None]))
+    puts(columns(['--help, -h', col1], ['NAME', col2], ['Show this information', None]))
 
 
 def main(argv):
@@ -324,35 +324,35 @@ def main(argv):
     if checkDatabase() == False:
         createDatabase()
 
-    if arg == "-add-TVShow":
+    if arg == "--add-TVShow":
         if not args:
             message = colored.red("Error: This option needs the name of the TV Show")
             sys.exit(message)
         createShow(args, SERIES_DB)
         return
 
-    if arg == "-add-anime":
+    if arg == "--add-anime":
         if not args:
             message = colored.red("Error: This option needs the name of the Anime")
             sys.exit(message)
         createShow(args, ANIME_DB)
         return
 
-    if arg == "-add-wanted" or arg == "--aw":
+    if arg == "--add-wanted" or arg == "-aw":
         if not args:
             message = colored.red("Error: This option needs the name Show")
             sys.exit(message)
         createShow(args, WANTED_DB)
         return
 
-    if arg == "-delete" or arg == "--d":
+    if arg == "--delete" or arg == "-d":
         if not args:
             message = colored.red("Error: This option needs the name of Show")
             sys.exit(message)
         deleteShow(args, True)
         return
 
-    if arg == "-list" or arg == "--l":
+    if arg == "--list" or arg == "-l":
         if not args:
             message = colored.red("Error: This option needs the name of Show")
             sys.exit(message)
@@ -360,7 +360,7 @@ def main(argv):
         listSeries(args)
         return
 
-    if arg == "-list-all" or arg == "--la":
+    if arg == "--list-all" or arg == "-la":
         if args:
             message = colored.red("Error: This option doesn't take arguments")
             sys.exit(message)
@@ -368,21 +368,21 @@ def main(argv):
         listSeries(args)
         return
 
-    if arg == "-list-wanted" or arg == "--lw":
+    if arg == "--list-wanted" or arg == "-lw":
         if args:
             message = colored.red("Error: This option doesn't take arguments")
             sys.exit(message)
         listWanted(args)
         return
 
-    if arg == "-watch" or arg == "--w":
+    if arg == "--watch" or arg == "-w":
         if not args:
             message = colored.red("Error: This option needs the name of the Show")
             sys.exit(message)
         watchEntry(args)
         return
 
-    if arg == "-help" or arg == "--h":
+    if arg == "--help" or arg == "-h":
         showHelp()
         return
 
