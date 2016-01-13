@@ -177,7 +177,7 @@ def modifyEntry(args):
 
 
 def watchAnime(name):
-    entry = getEntry(name, AnimeDB)
+    entry = getEntry(name, ANIME_DB)
     name = entry[0]
     episode = entry[1]
 
