@@ -286,7 +286,7 @@ def listWanted(args):
 
 
 def showHelp():
-    col1 = 17
+    col1 = 20
     col2 = 20
     col3 = 80
 
