@@ -1,6 +1,7 @@
 post_install() {
     echo ""
-    echo "Create a directory called TVShowsBox on your user directory and use the example file provided at /usr/share/doc/TVShowsBox.conf"
+    echo "Create a directory called TVShowsBox at your home: mkdir
+    ~/.TVShowsBox"
 }
 
 post_upgrade() {

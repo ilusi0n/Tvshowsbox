@@ -247,7 +247,7 @@ def watchEntry(args):
 
 
 def listEntry(args):
-    name = "%".join(args) + "%"
+    name = "%" + "".join(args) + "%"
     animeExists = searchEntry(name, ANIME_DB)
     seriesExists = searchEntry(name, SERIES_DB)
     if animeExists == False and seriesExists == False:
