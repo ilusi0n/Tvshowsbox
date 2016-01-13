@@ -15,6 +15,7 @@
 
 * python
 * sqlite
+* [Clint](https://github.com/kennethreitz/clint)
 
 ### Features ###
 
@@ -31,6 +32,7 @@
 
 * Import/export the database (to and from a file)
 * Mark a specific episode as watched only if is greater than the current watched episode
+* Edit a Show
 
 ### Features that probably will not be added ###
 
