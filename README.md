@@ -1,15 +1,13 @@
-# README #
-
 ### TVShowsBox ###
 
 * A script written in python that manages all your Shows in a sqlite database.
 * It supports animes and TV Shows. You can also add whatever you want to the wanted list like movies, series, your cat's name, etc
 * Version 0.1
+* I'm quite new in python, so don't expect a really good code.
 
 ### Why you did this? ###
 
 * I know that there is websites which have this functionality and a lot of more features. I do use one of those sites but only to know where a specific TV Show is and when is released. For mark watch episodes I used to write on a txt file on my computer.
-* I'm quite new in python, so don't expect a really good code.
 
 ### Dependencies ###
 
