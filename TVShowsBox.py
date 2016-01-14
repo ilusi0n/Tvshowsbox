@@ -5,12 +5,11 @@
 ###########################
 
 from sys import exit
-import os.path
 from sys import argv
 import sqlite3
 from clint.textui import puts, colored, indent, columns
-
 from os.path import expanduser
+
 home = expanduser("~")
 CONFIG_FOLDER = home + '/.config/TVShowsBox'
 DATABASE_URL = CONFIG_FOLDER + '/tvshows.db'
