@@ -2,7 +2,7 @@
 
 ### TVShowsBox ###
 
-* A script written in python that manages all your TV Shows in a sqlite database.
+* A script written in python that manages all your Shows in a sqlite database.
 * It supports animes and TV Shows. You can also add whatever you want to the wanted list like movies, series, your cat's name, etc
 * Version 0.1
 
