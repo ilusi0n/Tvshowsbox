@@ -335,10 +335,10 @@ def showHelp():
     puts(columns(['--delete, -d', col1], ['NAME', col2], ['Delete a TV Show', None]))
     puts(columns(['--edit, -e', col1], ['NAME', col2], ['Edit a Show', None]))
     puts(columns(['--list, -l', col1], ['NAME', col2], ['List a Show (it shows partial results)', None]))
-    puts(columns(['--list-all, -la', col1], ['NAME', col2], ['List all the Shows (except the wanted ones)', None]))
-    puts(columns(['--list-wanted, -lw', col1], ['NAME', col2], ['List all the Shows on Wanted List', None]))
+    puts(columns(['--list-all, -la', col1], ['', col2], ['List all the Shows (except the wanted ones)', None]))
+    puts(columns(['--list-wanted, -lw', col1], ['', col2], ['List all the Shows on Wanted List', None]))
     puts(columns(['--watch, -w', col1], ['NAME', col2], ['Mark watch the next episode', None]))
-    puts(columns(['--help, -h', col1], ['NAME', col2], ['Show this information', None]))
+    puts(columns(['--help, -h', col1], ['', col2], ['Show this information', None]))
 
 
 def main(argv):
