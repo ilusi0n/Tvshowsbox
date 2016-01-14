@@ -13,14 +13,15 @@
 
 ### Dependencies ###
 
-* python
-* sqlite
-* [Clint](https://github.com/kennethreitz/clint)
+* Python (obviously)
+* Sqlite
+* [Clint, a Python Command-line Application Tools](https://github.com/kennethreitz/clint)
 
 ### Features ###
 
 * Add TV Shows and Animes
 * Delete TV Shows and Animes
+* Edit a Show
 * Mark next episode as watched
 * Support for partial search
 * List all TV Shows and Animes
@@ -32,7 +33,6 @@
 
 * Import/export the database (to and from a file)
 * Mark a specific episode as watched only if is greater than the current watched episode
-* Edit a Show
 
 ### Features that probably will not be added ###
 

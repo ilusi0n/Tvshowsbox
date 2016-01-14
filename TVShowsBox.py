@@ -4,7 +4,7 @@
 # Developer: Hugo Cabrita #
 ###########################
 
-import sys
+from sys import exit
 import os.path
 from sys import argv
 import sqlite3
@@ -85,14 +85,14 @@ def createShow(args, table_name):
     name = " ".join(args)
     if searchEntry(name, table_name) == True:
         message = colored.red("The %s is already %s" % (name, table_name.lower()))
-        sys.exit(message)
+        exit(message)
 
     conn = sqlite3.connect(DATABASE_URL)
     c = conn.cursor()
     t = (name,)
 
     if (searchEntry(name, SERIES_DB) or searchEntry(name, ANIME_DB)):
-        sys.exit(colored.red("Error: You are already watching %s") % (name))
+        exit(colored.red("Error: You are already watching %s") % (name))
 
     if (table_name == SERIES_DB):
         sql = "INSERT INTO {tn} VALUES (?,'1','0')".format(tn=table_name)
@@ -112,6 +112,42 @@ def createShow(args, table_name):
     print(message)
 
 
+def editShow(args):
+    name = " ".join(args)
+    animeExists = searchEntry(name, ANIME_DB)
+    serieExists = searchEntry(name, SERIES_DB)
+    wantedEXists = searchEntry(name, WANTED_DB)
+
+    if animeExists == False and serieExists == False and wantedEXists == False:
+        message = colored.red("%s doesn't exist in the database" % (name))
+        exit(message)
+
+    conn = sqlite3.connect(DATABASE_URL)
+    c = conn.cursor()
+
+    if (serieExists):
+        name = input(colored.cyan("Name: "))
+        season = input(colored.cyan("Season: "))
+        episode = input(colored.cyan("Episode: "))
+        t = (name, season, episode,)
+        sql = "INSERT INTO {tn} VALUES (?,?,?)".format(tn=table_name)
+    elif animeExists:
+        name = input(colored.cyan("Name: "))
+        episode = input(colored.cyan("Episode: "))
+        t = (name, episode,)
+        sql = "INSERT INTO {tn} VALUES (?,?)".format(tn=table_name)
+    else:
+        name = input(colored.cyan("Name: "))
+        t = (name,)
+        sql = "INSERT INTO {tn} VALUES (?)".format(tn=table_name)
+
+    c.execute(sql, t)
+    conn.commit()
+    conn.close()
+    message = colored.cyan("%s was updated" % (name))
+    print(message)
+
+
 def deleteShow(name, message):
     name = " ".join(name)
     table_name = ""
@@ -124,7 +160,7 @@ def deleteShow(name, message):
         table_name = WANTED_DB
 
     if table_name == "" and message == True:
-        sys.exit(colored.red("Error: %s doesn't exist" % (name)))
+        exit(colored.red("Error: %s doesn't exist" % (name)))
 
     conn = sqlite3.connect(DATABASE_URL)
     c = conn.cursor()
@@ -141,17 +177,15 @@ def deleteShow(name, message):
 def watchAnime(name):
     entry = getEntry(name, ANIME_DB)
     name = entry[0]
-    episode = entry[1]
+    episode = entry[1] + 1
 
     conn = sqlite3.connect(DATABASE_URL)
     c = conn.cursor()
-    t = (episode + 1, name,)
+    t = (episode, name,)
     sql = "UPDATE {tn} SET Episode = ?  WHERE Name = ?".format(tn=ANIME_DB)
     c.execute(sql, t)
     conn.commit()
     conn.close()
-    nEntry = getEntry(name, ANIME_DB)
-    episode = str(nEntry[1])
     print("")
     puts(colored.yellow("Update:\n"))
     with indent(4):
@@ -172,23 +206,23 @@ def watchSerie(name):
         puts(colored.green("Episode: %s\n" % (episode)))
 
     response = input(colored.cyan("New Season? (y/n): "))
+
     if response == "y":
-        t = (season + 1, 1, name,)
+        season = season + 1
+        episode = 1
     elif response == "n":
-        t = (season, episode + 1, name,)
+        episode = episode + 1
     else:
         message = colored.red("Error: That answer is not valid. Aborting...")
-        sys.exit(message)
+        exit(message)
 
+    t = (season, episode, name,)
     conn = sqlite3.connect(DATABASE_URL)
     c = conn.cursor()
     sql = "UPDATE {tn} SET Season = ?, Episode = ?  WHERE Name = ?".format(tn=SERIES_DB)
     c.execute(sql, t)
     conn.commit()
     conn.close()
-    nEntry = getEntry(name, SERIES_DB)
-    season = str(nEntry[1])
-    episode = str(nEntry[2])
     print("")
     puts(colored.yellow("Update:\n"))
     with indent(4):
@@ -204,7 +238,7 @@ def watchEntry(args):
 
     if seriesExists == False and animeExists == False:
         message = colored.red("Error: That TV Show or Anime doesn't exist")
-        sys.exit(message)
+        exit(message)
 
     if (seriesExists == True):
         watchSerie(name)
@@ -269,7 +303,7 @@ def listWanted(args):
     wantedListExists = searchEntry(name, WANTED_DB)
     if wantedListExists == False:
         message = colored.yellow("Warning: The wanted list is empty")
-        sys.exit(message)
+        exit(message)
 
     conn = sqlite3.connect(DATABASE_URL)
     c = conn.cursor()
@@ -287,7 +321,7 @@ def listWanted(args):
 
 def showHelp():
     col1 = 20
-    col2 = 20
+    col2 = 10
     col3 = 80
 
     puts(columns([(colored.magenta('TVShowsBox v0.1')), col3]))
@@ -295,12 +329,13 @@ def showHelp():
     print("")
     puts(columns([('Options:'), col3]))
     print("")
-    puts(columns(['--add-TVShow', col1], ['NAME', col2], ['Add a TV Show', None]))
+    puts(columns(['--add-tvshow', col1], ['NAME', col2], ['Add a TV Show', None]))
     puts(columns(['--add-anime', col1], ['NAME', col2], ['Add a Anime', None]))
     puts(columns(['--want, -aw', col1], ['NAME', col2], ['Add the Show to the Wanted List', None]))
     puts(columns(['--delete, -d', col1], ['NAME', col2], ['Delete a TV Show', None]))
-    puts(columns(['--list, -l', col1], ['NAME', col2], ['List a TV Show (it shows partial results)', None]))
-    puts(columns(['--list-all, -la', col1], ['NAME', col2], ['List all the TV Shows (except the wanted ones)', None]))
+    puts(columns(['--edit, -e', col1], ['NAME', col2], ['Edit a Show', None]))
+    puts(columns(['--list, -l', col1], ['NAME', col2], ['List a Show (it shows partial results)', None]))
+    puts(columns(['--list-all, -la', col1], ['NAME', col2], ['List all the Shows (except the wanted ones)', None]))
     puts(columns(['--list-wanted, -lw', col1], ['NAME', col2], ['List all the Shows on Wanted List', None]))
     puts(columns(['--watch, -w', col1], ['NAME', col2], ['Mark watch the next episode', None]))
     puts(columns(['--help, -h', col1], ['NAME', col2], ['Show this information', None]))
@@ -312,50 +347,57 @@ def main(argv):
     if not args:
         message = colored.red(
             "Error: It's required at least 1 argument. Use the -h or help to see which options are available")
-        sys.exit(message)
+        exit(message)
 
     arg = args[0]
     args = args[1:]
 
     if not os.path.exists(CONFIG_FOLDER):
         message = colored.red("Error: create the folder TVShowsBox on your home directory")
-        sys.exit(message)
+        exit(message)
 
     if checkDatabase() == False:
         createDatabase()
 
-    if arg == "--add-TVShow":
+    if arg == "--add-tvshow":
         if not args:
             message = colored.red("Error: This option needs the name of the TV Show")
-            sys.exit(message)
+            exit(message)
         createShow(args, SERIES_DB)
         return
 
     if arg == "--add-anime":
         if not args:
             message = colored.red("Error: This option needs the name of the Anime")
-            sys.exit(message)
+            exit(message)
         createShow(args, ANIME_DB)
         return
 
     if arg == "--add-wanted" or arg == "-aw":
         if not args:
             message = colored.red("Error: This option needs the name Show")
-            sys.exit(message)
+            exit(message)
         createShow(args, WANTED_DB)
         return
 
     if arg == "--delete" or arg == "-d":
         if not args:
             message = colored.red("Error: This option needs the name of Show")
-            sys.exit(message)
+            exit(message)
         deleteShow(args, True)
+        return
+
+    if arg == "--edit" or arg == "-e":
+        if not args:
+            message = colored.red("Error: This option needs the name of Show")
+            exit(message)
+        editShow(args)
         return
 
     if arg == "--list" or arg == "-l":
         if not args:
             message = colored.red("Error: This option needs the name of Show")
-            sys.exit(message)
+            exit(message)
         listAnimes(args)
         listSeries(args)
         return
@@ -363,7 +405,7 @@ def main(argv):
     if arg == "--list-all" or arg == "-la":
         if args:
             message = colored.red("Error: This option doesn't take arguments")
-            sys.exit(message)
+            exit(message)
         listAnimes(args)
         listSeries(args)
         return
@@ -371,14 +413,14 @@ def main(argv):
     if arg == "--list-wanted" or arg == "-lw":
         if args:
             message = colored.red("Error: This option doesn't take arguments")
-            sys.exit(message)
+            exit(message)
         listWanted(args)
         return
 
     if arg == "--watch" or arg == "-w":
         if not args:
             message = colored.red("Error: This option needs the name of the Show")
-            sys.exit(message)
+            exit(message)
         watchEntry(args)
         return
 
@@ -387,7 +429,7 @@ def main(argv):
         return
 
     message = colored.red("Error: Invalid Option! Use the -h or help to see which options are available")
-    sys.exit(message)
+    exit(message)
 
 
 if __name__ == "__main__":
