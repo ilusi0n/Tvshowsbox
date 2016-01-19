@@ -116,9 +116,8 @@ def editShow(args):
     name = " ".join(args)
     animeExists = searchEntry(name, ANIME_DB)
     serieExists = searchEntry(name, SERIES_DB)
-    wantedEXists = searchEntry(name, WANTED_DB)
 
-    if animeExists == False and serieExists == False and wantedEXists == False:
+    if animeExists == False and serieExists == False:
         message = colored.red("%s doesn't exist in the database" % (name))
         exit(message)
 
@@ -126,20 +125,15 @@ def editShow(args):
     c = conn.cursor()
 
     if (serieExists):
-        name = input(colored.cyan("Name: "))
         season = input(colored.cyan("Season: "))
         episode = input(colored.cyan("Episode: "))
-        t = (name, season, episode,)
-        sql = "INSERT INTO {tn} VALUES (?,?,?)".format(tn=table_name)
-    elif animeExists:
-        name = input(colored.cyan("Name: "))
-        episode = input(colored.cyan("Episode: "))
-        t = (name, episode,)
-        sql = "INSERT INTO {tn} VALUES (?,?)".format(tn=table_name)
+        t = (season, episode, name,)
+        sql = "UPDATE {tn} SET Season = ?, Episode = ?  WHERE Name = ?".format(tn=SERIES_DB)
     else:
         name = input(colored.cyan("Name: "))
-        t = (name,)
-        sql = "INSERT INTO {tn} VALUES (?)".format(tn=table_name)
+        episode = input(colored.cyan("Episode: "))
+        t = (episode, name,)
+        ql = "UPDATE {tn} SET Episode = ?  WHERE Name = ?".format(tn=ANIME_DB)
 
     c.execute(sql, t)
     conn.commit()
