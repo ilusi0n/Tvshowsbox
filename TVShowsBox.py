@@ -241,7 +241,7 @@ def watchEntry(args):
 
 
 def listAnimes(args):
-    name = "%" + "".join(args) + "%"
+    name = "%" + " ".join(args) + "%"
     animeExists = searchEntry(name, ANIME_DB)
 
     print("")
@@ -267,7 +267,7 @@ def listAnimes(args):
 
 
 def listSeries(args):
-    name = "%" + "".join(args) + "%"
+    name = "%" + " ".join(args) + "%"
     seriesExists = searchEntry(name, SERIES_DB)
 
     puts(colored.blue(SERIES_DB) + "\n")
