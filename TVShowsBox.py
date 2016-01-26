@@ -55,12 +55,16 @@ def createDatabase():
     conn.close()
 
 
-def searchEntry(name, table_name):
+def searchEntry(name, table_name, case_sensitive):
     result = True
     conn = sqlite3.connect(DATABASE_URL)
     c = conn.cursor()
     t = (name,)
-    sql = "SELECT rowid FROM {tn} WHERE Name LIKE ?".format(tn=table_name)
+    if (case_sensitive):
+        sql = "SELECT rowid FROM {tn} WHERE Name = ?".format(tn=table_name)
+    else:
+        sql = "SELECT rowid FROM {tn} WHERE Name LIKE ?".format(tn=table_name)
+
     c.execute(sql, t)
     data = c.fetchall()
     if len(data) == 0:
@@ -83,7 +87,7 @@ def getEntry(name, table_name):
 
 def createShow(args, table_name):
     name = " ".join(args)
-    if searchEntry(name, table_name) == True:
+    if searchEntry(name, table_name, False) == True:
         message = colored.red("The %s is already %s" % (name, table_name.lower()))
         exit(message)
 
@@ -91,7 +95,7 @@ def createShow(args, table_name):
     c = conn.cursor()
     t = (name,)
 
-    if (searchEntry(name, SERIES_DB) or searchEntry(name, ANIME_DB)):
+    if (searchEntry(name, SERIES_DB, False) or searchEntry(name, ANIME_DB, False)):
         exit(colored.red("Error: You are already watching %s") % (name))
 
     if (table_name == SERIES_DB):
@@ -114,8 +118,8 @@ def createShow(args, table_name):
 
 def editShow(args):
     name = " ".join(args)
-    animeExists = searchEntry(name, ANIME_DB)
-    serieExists = searchEntry(name, SERIES_DB)
+    animeExists = searchEntry(name, ANIME_DB, True)
+    serieExists = searchEntry(name, SERIES_DB, True)
 
     if animeExists == False and serieExists == False:
         message = colored.red("%s doesn't exist in the database" % (name))
@@ -146,9 +150,9 @@ def deleteShow(name, message):
     name = " ".join(name)
     table_name = ""
 
-    if searchEntry(name, SERIES_DB):
+    if searchEntry(name, SERIES_DB, True):
         table_name = SERIES_DB
-    elif searchEntry(name, ANIME_DB):
+    elif searchEntry(name, ANIME_DB, True):
         table_name = ANIME_DB
     else:
         table_name = WANTED_DB
@@ -189,10 +193,6 @@ def watchAnime(name):
 
 def watchSerie(name):
     entry = getEntry(name, SERIES_DB)
-    if type(entry) == bool:
-        message = colored.red("Error: The name of the TV Show is case sensitive.")
-        exit(message)
-
     name = entry[0]
     season = entry[1]
     episode = entry[2]
@@ -231,8 +231,8 @@ def watchSerie(name):
 
 def watchEntry(args):
     name = " ".join(args)
-    seriesExists = searchEntry(name, SERIES_DB)
-    animeExists = searchEntry(name, ANIME_DB)
+    seriesExists = searchEntry(name, SERIES_DB, True)
+    animeExists = searchEntry(name, ANIME_DB, True)
 
     if seriesExists == False and animeExists == False:
         message = colored.red("Error: That TV Show or Anime doesn't exist")
@@ -246,7 +246,7 @@ def watchEntry(args):
 
 def listAnimes(args):
     name = "%" + " ".join(args) + "%"
-    animeExists = searchEntry(name, ANIME_DB)
+    animeExists = searchEntry(name, ANIME_DB, False)
 
     print("")
     puts(colored.blue(ANIME_DB + "\n"))
@@ -272,7 +272,7 @@ def listAnimes(args):
 
 def listSeries(args):
     name = "%" + " ".join(args) + "%"
-    seriesExists = searchEntry(name, SERIES_DB)
+    seriesExists = searchEntry(name, SERIES_DB, False)
 
     puts(colored.blue(SERIES_DB) + "\n")
 
@@ -298,7 +298,7 @@ def listSeries(args):
 
 def listWanted(args):
     name = "%" + " ".join(args) + "%"
-    wantedListExists = searchEntry(name, WANTED_DB)
+    wantedListExists = searchEntry(name, WANTED_DB, False)
     if wantedListExists == False:
         message = colored.yellow("Warning: The wanted list is empty")
         exit(message)
