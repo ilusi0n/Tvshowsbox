@@ -70,7 +70,7 @@ def searchEntry(name, table_name):
 
 
 def getEntry(name, table_name):
-    result = True
+    result = False
     conn = sqlite3.connect(DATABASE_URL)
     c = conn.cursor()
     t = (name,)
@@ -189,6 +189,10 @@ def watchAnime(name):
 
 def watchSerie(name):
     entry = getEntry(name, SERIES_DB)
+    if type(entry) == bool:
+        message = colored.red("Error: The name of the TV Show is case sensitive.")
+        exit(message)
+
     name = entry[0]
     season = entry[1]
     episode = entry[2]
