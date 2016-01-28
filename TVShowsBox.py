@@ -137,7 +137,7 @@ def editShow(args):
         name = input(colored.cyan("Name: "))
         episode = input(colored.cyan("Episode: "))
         t = (episode, name,)
-        ql = "UPDATE {tn} SET Episode = ?  WHERE Name = ?".format(tn=ANIME_DB)
+        sql = "UPDATE {tn} SET Episode = ?  WHERE Name = ?".format(tn=ANIME_DB)
 
     c.execute(sql, t)
     conn.commit()
