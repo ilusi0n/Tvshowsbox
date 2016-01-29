@@ -134,7 +134,6 @@ def editShow(args):
         t = (season, episode, name,)
         sql = "UPDATE {tn} SET Season = ?, Episode = ?  WHERE Name = ?".format(tn=SERIES_DB)
     else:
-        name = input(colored.cyan("Name: "))
         episode = input(colored.cyan("Episode: "))
         t = (episode, name,)
         sql = "UPDATE {tn} SET Episode = ?  WHERE Name = ?".format(tn=ANIME_DB)
