@@ -27,10 +27,6 @@
 * List all Shows in the Wanted List
 * TV Show or Anime is removed from the Wanted List, if the user add it to the currently watching shows
 
-### TODO ###
-
-* Import/export the database (to and from a file)
-
 ### Features that probably will not be added ###
 
 * Security
