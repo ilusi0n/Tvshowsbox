@@ -26,7 +26,3 @@
 * List all Shows (except the ones on the wanted list)
 * List all Shows in the Wanted List
 * TV Show or Anime is removed from the Wanted List, if the user add it to the currently watching shows
-
-### Features that probably will not be added ###
-
-* Security
