@@ -3,7 +3,6 @@
 * A script written in python that manages all your Shows in a sqlite database.
 * It supports animes and TV Shows. You can also add whatever you want to the wanted list like movies, series, your cat's name, etc
 * Version 0.1
-* I'm quite new in python, so don't expect a really good code.
 
 ### Why you did this? ###
 
